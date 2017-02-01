@@ -69,25 +69,30 @@ public class JSONElement {
      * @return  the item matched by the JSONPointer, otherwise null
      */
     public JSONElement query(String pointer) {
-        if(!EdenUtils.isEmpty(pointer)) {
-            pointer = pointer.replaceAll("\\.", "/");
+        try {
+            if (!EdenUtils.isEmpty(pointer)) {
+                pointer = pointer.replaceAll("\\.", "/");
 
-            if (!pointer.startsWith("/")) {
-                pointer = "/" + pointer;
-            }
+                if (!pointer.startsWith("/")) {
+                    pointer = "/" + pointer;
+                }
 
-            Object result = null;
+                Object result = null;
 
-            if(element instanceof JSONObject) {
-                result = ((JSONObject) element).query(pointer);
-            }
-            else if(element instanceof JSONArray) {
-                result = ((JSONArray) element).query(pointer);
-            }
+                if (element instanceof JSONObject) {
+                    result = ((JSONObject) element).query(pointer);
+                }
+                else if (element instanceof JSONArray) {
+                    result = ((JSONArray) element).query(pointer);
+                }
 
-            if (result != null) {
-                return new JSONElement(result);
+                if (result != null) {
+                    return new JSONElement(result);
+                }
             }
+        }
+        catch (Exception e) {
+
         }
 
         return null;
