@@ -29,10 +29,8 @@ public class EdenInjector {
                     }
                     else {
                         Clog.e("@#{$1} annotation must be used on a field of type #{$2} or one of its subclasses.",
-                                new Object[]{
-                                        definition.annotationClass.getSimpleName(),
-                                        definition.fieldTypeClass.getSimpleName()
-                                }
+                                definition.annotationClass.getSimpleName(),
+                                definition.fieldTypeClass.getSimpleName()
                         );
                     }
                 }
