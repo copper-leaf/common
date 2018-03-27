@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EdenUtils {
 
@@ -108,4 +110,35 @@ public class EdenUtils {
 
         return dest;
     }
+
+    public static Map<String, ?> merge(Map<String, ?>... sources) {
+        Map<String, Object> dest = new HashMap<>();
+
+        for(Map<String, ?> tmpSource : sources) {
+            if(tmpSource == null) continue;
+            Map<String, ?> source = new HashMap<>(tmpSource);
+
+            for (String key : source.keySet()) {
+                if (dest.containsKey(key)) {
+                    if (dest.get(key) instanceof Map && source.get(key) instanceof Map) {
+                        dest.put(key, merge((Map<String, ?>) dest.get(key), (Map<String, ?>) source.get(key)));
+                    }
+                    else if (dest.get(key) instanceof Collection && source.get(key) instanceof Collection) {
+                        for (Object obj : (Collection) source.get(key)) {
+                            ((Collection) dest.get(key)).add(obj);
+                        }
+                    }
+                    else {
+                        dest.put(key, source.get(key));
+                    }
+                }
+                else {
+                    dest.put(key, source.get(key));
+                }
+            }
+        }
+
+        return dest;
+    }
+
 }

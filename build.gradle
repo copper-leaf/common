@@ -18,7 +18,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
 
-    implementation 'com.github.cjbrooks12:Clog:v1.6.1'
+    implementation 'com.eden:Clog:2.0.0'
     implementation 'org.json:json:20180130'
     implementation 'javax.inject:javax.inject:1'
 }
