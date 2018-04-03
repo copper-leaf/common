@@ -34,7 +34,7 @@ public final class DateTimeConverter implements TypeConverter<LocalDateTime> {
     @Override
     public EdenPair<Boolean, LocalDateTime> convert(Object object) {
         if(object instanceof LocalDate) {
-            return new EdenPair<>(true, ((LocalDate) object).atStartOfDay());
+            return new EdenPair<>(true, ((LocalDate) object).atTime(LocalTime.now()));
         }
         else if(object instanceof LocalTime) {
             return new EdenPair<>(true, ((LocalTime) object).atDate(LocalDate.now()));
@@ -46,7 +46,16 @@ public final class DateTimeConverter implements TypeConverter<LocalDateTime> {
             String dateTimeString = stringConverter.convert(object).second;
 
             if(dateTimeString.equalsIgnoreCase("now")) {
+                return new EdenPair<>(true, LocalDateTime.now());
+            }
+            else if(dateTimeString.equalsIgnoreCase("today")) {
                 return new EdenPair<>(true, LocalDate.now().atStartOfDay());
+            }
+            else if(dateTimeString.equalsIgnoreCase("yesterday")) {
+                return new EdenPair<>(true, LocalDate.now().atStartOfDay().minusDays(1));
+            }
+            else if(dateTimeString.equalsIgnoreCase("tomorrow")) {
+                return new EdenPair<>(true, LocalDate.now().atStartOfDay().plusDays(1));
             }
 
             try {
@@ -55,12 +64,17 @@ public final class DateTimeConverter implements TypeConverter<LocalDateTime> {
             catch (DateTimeParseException e) { }
 
             try {
-                return new EdenPair<>(true, LocalDate.parse(dateTimeString).atStartOfDay());
+                return new EdenPair<>(true, LocalDate.parse(dateTimeString).atTime(LocalTime.now()));
+            }
+            catch (DateTimeParseException e) { }
+
+            try {
+                return new EdenPair<>(true, LocalTime.parse(dateTimeString).atDate(LocalDate.now()));
             }
             catch (DateTimeParseException e) { }
         }
 
-        return new EdenPair<>(false, LocalDate.now().atStartOfDay());
+        return new EdenPair<>(false, LocalDateTime.now());
     }
 
 }
