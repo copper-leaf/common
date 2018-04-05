@@ -1,0 +1,34 @@
+
+site:
+  about:
+    siteName: Eden Commons
+    siteDescription: A collection of utility classes and tools used throughout other Eden repositories.
+
+theme:
+  social:
+    github: 'JavaEden/Common'
+  primaryColor: '#740001'
+  bannerColor: '#740001'
+  menu:
+    - type: 'link'
+      title: 'Home'
+      url: '#{$0|baseUrl}/'
+    - type: 'wiki'
+      title: 'Wiki'
+      topLevel: true
+    - type: 'javadocPackages'
+    - type: 'javadocClasses'
+  trianglifyOptions:
+    x_colors: ['#740001', '#eeba30', '#740001']
+  useSidebarSearch: true
+
+allPages:
+  components:
+    - type: pageContent
+      order: 10
+
+wiki:
+  includeIndexInPageTitle: false
+  sections:
+    - json
+    - options

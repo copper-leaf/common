@@ -1,37 +1,72 @@
+// Configure build
+//----------------------------------------------------------------------------------------------------------------------
 
-plugins {
-    id 'java'
+buildscript {
+    ext.orchid_version = '0.8.1'
+    repositories {
+        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.google.com' }
+        maven { url "https://jitpack.io" }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.eden:orchidPlugin:${orchid_version}"
+        classpath "gradle.plugin.com.eden:orchidJavadocPlugin:${orchid_version}"
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
 }
+
+apply plugin: 'base'
+apply plugin: 'jacoco'
+
+// Configure Project
+//----------------------------------------------------------------------------------------------------------------------
 
 group 'com.eden'
-version 'v0.2.0'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-    jcenter()
-    maven { url 'https://jitpack.io' }
+allprojects {
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
+    }
 }
 
-def junit_version = '5.1.0'
+// Get release info
+//----------------------------------------------------------------------------------------------------------------------
 
-dependencies {
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.hamcrest:hamcrest-library:1.3'
-
-    implementation 'com.eden:Clog:2.0.0'
-    implementation 'org.json:json:20180130'
-    implementation 'javax.inject:javax.inject:1'
-
-    testCompile 'org.testng:testng:6.14.3'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'org.mockito:mockito-core:2.+'
-    testCompile "org.junit.jupiter:junit-jupiter-api:$junit_version"
-    testCompile "org.junit.jupiter:junit-jupiter-params:$junit_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+tag {
+    message { "Bump version to ${version}" }
 }
 
-test {
-    useJUnitPlatform()
+task getReleaseName {
+    doLast {
+        println project.version.toString()
+    }
+}
+
+task getReleaseNotes {
+    doLast {
+        def versionFilename = project.version.toString().replaceAll("\\.", "_") + ".md"
+        def fullVersionFilename = "${project(':Common').projectDir}/src/orchid/resources/changelog/$versionFilename"
+        def versionFile = file(fullVersionFilename)
+
+        if(versionFile.exists()) {
+            println versionFile.text.split("---").last().trim()
+        }
+        else {
+            println "No release notes"
+        }
+    }
+}
+
+
+task prepareDocumentation {
+}
+task deploy {
+    dependsOn prepareDocumentation
+    doLast { }
 }
