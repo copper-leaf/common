@@ -26,7 +26,7 @@ public class FlexibleMapConverterTest {
 
     @BeforeEach
     void setupTest() {
-        iterableConverter = new FlexibleIterableConverter(() -> underTest);
+        iterableConverter = new FlexibleIterableConverter(underTest);
         underTest = new FlexibleMapConverter();
     }
 

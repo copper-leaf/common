@@ -78,7 +78,7 @@ public final class DefaultExtractor extends Extractor {
         DateConverter dateConverter                         = new DateConverter(dateTimeConverter);
         TimeConverter timeConverter                         = new TimeConverter(dateTimeConverter);
         FlexibleMapConverter flexibleMapConverter           = new FlexibleMapConverter();
-        FlexibleIterableConverter flexibleIterableConverter = new FlexibleIterableConverter(() -> flexibleMapConverter);
+        FlexibleIterableConverter flexibleIterableConverter = new FlexibleIterableConverter(flexibleMapConverter);
 
         Set<TypeConverter> typeConverters = new HashSet<>();
         typeConverters.add(stringConverter);

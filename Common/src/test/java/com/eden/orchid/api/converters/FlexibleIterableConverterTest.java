@@ -32,7 +32,7 @@ public class FlexibleIterableConverterTest {
     @BeforeEach
     void setupTest() {
         mapConverter = new FlexibleMapConverter();
-        underTest = new FlexibleIterableConverter(() -> mapConverter);
+        underTest = new FlexibleIterableConverter(mapConverter);
     }
 
     @Test

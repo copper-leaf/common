@@ -1,6 +1,8 @@
 package com.eden.orchid.api.options.extractors;
 
 import com.eden.common.util.EdenPair;
+import com.eden.orchid.api.converters.Converters;
+import com.eden.orchid.api.converters.FlexibleIterableConverter;
 import com.eden.orchid.api.options.OptionExtractor;
 import com.eden.orchid.api.options.annotations.BooleanDefault;
 import com.eden.orchid.api.options.annotations.DoubleDefault;
@@ -8,8 +10,6 @@ import com.eden.orchid.api.options.annotations.FloatDefault;
 import com.eden.orchid.api.options.annotations.IntDefault;
 import com.eden.orchid.api.options.annotations.LongDefault;
 import com.eden.orchid.api.options.annotations.StringDefault;
-import com.eden.orchid.api.converters.Converters;
-import com.eden.orchid.api.converters.FlexibleIterableConverter;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
@@ -17,7 +17,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ### Source Types
@@ -139,10 +138,19 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         List<?> value = getDefaultValue(field);
 
         if(value.size() > 0) {
-            return "[" + value
-                    .stream()
-                    .map(item -> converters.convert(item, String.class).second)
-                    .collect(Collectors.joining(", ")) + "]";
+            StringBuilder defaultValue = new StringBuilder("[");
+            for (int i = 0; i < value.size(); i++) {
+                if(i == value.size() - 1) {
+                    defaultValue.append(converters.convert(value.get(i), String.class).second);
+                }
+                else {
+                    defaultValue.append(converters.convert(value.get(i), String.class).second);
+                    defaultValue.append(", ");
+                }
+            }
+            defaultValue.append("]");
+
+            return defaultValue.toString();
         }
 
         return "empty list";

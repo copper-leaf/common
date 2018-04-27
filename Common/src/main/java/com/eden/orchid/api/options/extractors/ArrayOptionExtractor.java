@@ -1,17 +1,15 @@
 package com.eden.orchid.api.options.extractors;
 
 import com.eden.common.util.EdenPair;
-import com.eden.orchid.api.options.OptionExtractor;
-import com.eden.orchid.api.options.annotations.StringDefault;
 import com.eden.orchid.api.converters.Converters;
 import com.eden.orchid.api.converters.FlexibleIterableConverter;
+import com.eden.orchid.api.options.OptionExtractor;
+import com.eden.orchid.api.options.annotations.StringDefault;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ### Source Types
@@ -86,9 +84,19 @@ public final class ArrayOptionExtractor extends OptionExtractor<String[]> {
         String[] value = getDefaultValue(field);
 
         if(value.length > 0) {
-            return "[" + Arrays.stream(value)
-                    .map(item -> converters.convert(item, String.class).second)
-                    .collect(Collectors.joining(", ")) + "]";
+            StringBuilder defaultValue = new StringBuilder("[");
+            for (int i = 0; i < value.length; i++) {
+                if(i == value.length - 1) {
+                    defaultValue.append(converters.convert(value[i], String.class).second);
+                }
+                else {
+                    defaultValue.append(converters.convert(value[i], String.class).second);
+                    defaultValue.append(", ");
+                }
+            }
+            defaultValue.append("]");
+
+            return defaultValue.toString();
         }
 
         return "empty array";

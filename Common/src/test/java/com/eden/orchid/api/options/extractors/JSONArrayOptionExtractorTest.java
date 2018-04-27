@@ -27,7 +27,7 @@ public class JSONArrayOptionExtractorTest extends BaseExtractorTest {
     public void setupTest() {
         StringConverter stringConverter = new StringConverter(new HashSet<>());
         FlexibleMapConverter mapConverter = new FlexibleMapConverter();
-        FlexibleIterableConverter iterableConverter = new FlexibleIterableConverter(() -> mapConverter);
+        FlexibleIterableConverter iterableConverter = new FlexibleIterableConverter(mapConverter);
 
         setupTest(new JSONArrayOptionExtractor(iterableConverter), stringConverter);
     }

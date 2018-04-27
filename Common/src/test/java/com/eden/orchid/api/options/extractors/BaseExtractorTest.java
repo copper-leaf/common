@@ -22,7 +22,7 @@ public abstract class BaseExtractorTest {
 
     public void setupTest(OptionExtractor extractorUnderTest, TypeConverter... converters) {
         FlexibleMapConverter mapConverter = new FlexibleMapConverter();
-        FlexibleIterableConverter iterableConverter = new FlexibleIterableConverter(() -> mapConverter);
+        FlexibleIterableConverter iterableConverter = new FlexibleIterableConverter(mapConverter);
 
         List<OptionExtractor> extractors = new ArrayList<>();
         extractors.add(extractorUnderTest);

@@ -1,10 +1,8 @@
 package com.eden.orchid.api.converters;
 
 import com.eden.common.util.EdenPair;
-import com.eden.orchid.api.converters.TypeConverter;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,10 +11,10 @@ import java.util.Map;
 
 public class FlexibleIterableConverter implements TypeConverter<Iterable> {
 
-    private final Provider<FlexibleMapConverter> mapConverter;
+    private final FlexibleMapConverter mapConverter;
 
     @Inject
-    public FlexibleIterableConverter(Provider<FlexibleMapConverter> mapConverter) {
+    public FlexibleIterableConverter(FlexibleMapConverter mapConverter) {
         this.mapConverter = mapConverter;
     }
 
@@ -40,7 +38,7 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
                 return new EdenPair<>(true, list);
             }
             else {
-                EdenPair<Boolean, Map> potentialMap = mapConverter.get().convert(object);
+                EdenPair<Boolean, Map> potentialMap = mapConverter.convert(object);
                 if(potentialMap.first) {
                     Map<String, Object> actualMap = (Map<String, Object>) potentialMap.second;
                     List<Object> list = mapToList(actualMap, keyName);
@@ -61,7 +59,7 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
         for(String key : map.keySet()) {
             Object item = map.get(key);
 
-            EdenPair<Boolean, Map> potentialMapItem = mapConverter.get().convert(item);
+            EdenPair<Boolean, Map> potentialMapItem = mapConverter.convert(item);
             if(potentialMapItem.first) {
                 Map<String, Object> mapItem = new HashMap<>((Map<String, Object>) potentialMapItem.second);
                 mapItem.put(keyName, key);
