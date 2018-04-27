@@ -5,6 +5,7 @@ import com.eden.common.json.JSONElement;
 import com.eden.common.util.EdenPair;
 import com.eden.common.util.EdenUtils;
 import com.eden.orchid.api.options.annotations.Archetype;
+import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.Option;
 import com.eden.orchid.api.options.annotations.OptionsData;
 
@@ -38,7 +39,7 @@ public abstract class Extractor {
 
     public final void extractOptions(Object optionsHolder, Map<String, Object> options) {
         // setup initial options
-        Map<String, Object> initialOptions = (options != null) ? new HashMap<>(options) : new HashMap<>();
+        Map<String, Object> initialOptions = (options != null) ? new HashMap<>(options) : new HashMap<String, Object>();
         Map<String, Object> archetypalOptions = loadArchetypalData(optionsHolder, initialOptions);
 
         Map<String, Object> actualOptions = EdenUtils.merge(archetypalOptions, initialOptions);
@@ -124,7 +125,11 @@ public abstract class Extractor {
         List<Archetype> archetypeAnnotations = new ArrayList<>();
 
         while (optionsHolderClass != null) {
-            Collections.addAll(archetypeAnnotations, optionsHolderClass.getAnnotationsByType(Archetype.class));
+            Archetypes archetypes = optionsHolderClass.getAnnotation(Archetypes.class);
+            if(archetypes != null) {
+                Collections.addAll(archetypeAnnotations, archetypes.value());
+            }
+
             optionsHolderClass = optionsHolderClass.getSuperclass();
         }
 
