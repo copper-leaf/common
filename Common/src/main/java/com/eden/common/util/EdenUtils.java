@@ -54,17 +54,17 @@ public class EdenUtils {
     }
 
     public static boolean isJsonAware(Object object) {
-        if(object instanceof Jsonable) return true;
-        if(object instanceof JSONObject) return true;
-        if(object instanceof JSONArray)  return true;
-        if(object instanceof String)     return true;
-        if(object instanceof Byte)       return true;
-        if(object instanceof Short)      return true;
-        if(object instanceof Integer)    return true;
-        if(object instanceof Long)       return true;
-        if(object instanceof Double)     return true;
-        if(object instanceof Float)      return true;
-        if(object instanceof Boolean)    return true;
+        if (object instanceof Jsonable) return true;
+        if (object instanceof JSONObject) return true;
+        if (object instanceof JSONArray) return true;
+        if (object instanceof String) return true;
+        if (object instanceof Byte) return true;
+        if (object instanceof Short) return true;
+        if (object instanceof Integer) return true;
+        if (object instanceof Long) return true;
+        if (object instanceof Double) return true;
+        if (object instanceof Float) return true;
+        if (object instanceof Boolean) return true;
 
         return false;
     }
@@ -84,8 +84,8 @@ public class EdenUtils {
     public static JSONObject merge(JSONObject... sources) {
         JSONObject dest = new JSONObject();
 
-        for(JSONObject tmpSource : sources) {
-            if(tmpSource == null) continue;
+        for (JSONObject tmpSource : sources) {
+            if (tmpSource == null) continue;
             JSONObject source = new JSONObject(tmpSource.toMap());
 
             for (String key : source.keySet()) {
@@ -111,11 +111,11 @@ public class EdenUtils {
         return dest;
     }
 
-    public static Map<String, ?> merge(Map<String, ?>... sources) {
+    public static Map<String, Object> merge(Map<String, ?>... sources) {
         Map<String, Object> dest = new HashMap<>();
 
-        for(Map<String, ?> tmpSource : sources) {
-            if(tmpSource == null) continue;
+        for (Map<String, ?> tmpSource : sources) {
+            if (tmpSource == null) continue;
             Map<String, ?> source = new HashMap<>(tmpSource);
 
             for (String key : source.keySet()) {
@@ -140,5 +140,103 @@ public class EdenUtils {
 
         return dest;
     }
+
+
+// Auto-box primitive arrays
+//----------------------------------------------------------------------------------------------------------------------
+
+    public static Integer[] box(int[] items) {
+        Integer[] newItems;
+        if (items == null) {
+            newItems = new Integer[0];
+        }
+        else {
+            newItems = new Integer[items.length];
+            for (int i = 0; i < items.length; i++) {
+                newItems[i] = items[i];
+            }
+        }
+        return newItems;
+    }
+
+    public static Long[] box(long[] items) {
+        Long[] newItems;
+        if (items == null) {
+            newItems = new Long[0];
+        }
+        else {
+            newItems = new Long[items.length];
+            for (int i = 0; i < items.length; i++) {
+                newItems[i] = items[i];
+            }
+        }
+        return newItems;
+    }
+
+    public static Boolean[] box(boolean[] items) {
+        Boolean[] newItems;
+        if (items == null) {
+            newItems = new Boolean[0];
+        }
+        else {
+            newItems = new Boolean[items.length];
+            for (int i = 0; i < items.length; i++) {
+                newItems[i] = items[i];
+            }
+        }
+        return newItems;
+    }
+
+    public static Double[] box(double[] items) {
+        Double[] newItems;
+        if (items == null) {
+            newItems = new Double[0];
+        }
+        else {
+            newItems = new Double[items.length];
+            for (int i = 0; i < items.length; i++) {
+                newItems[i] = items[i];
+            }
+        }
+        return newItems;
+    }
+
+    public static Float[] box(float[] items) {
+        Float[] newItems;
+        if (items == null) {
+            newItems = new Float[0];
+        }
+        else {
+            newItems = new Float[items.length];
+            for (int i = 0; i < items.length; i++) {
+                newItems[i] = items[i];
+            }
+        }
+        return newItems;
+    }
+
+    public static Object[] box(Object items) {
+        if (items.getClass().equals(int[].class)) {
+            return box((int[]) items);
+        }
+        else if (items.getClass().equals(long[].class)) {
+            return box((long[]) items);
+        }
+        else if (items.getClass().equals(boolean[].class)) {
+            return box((boolean[]) items);
+        }
+        else if (items.getClass().equals(double[].class)) {
+            return box((double[]) items);
+        }
+        else if (items.getClass().equals(float[].class)) {
+            return box((float[]) items);
+        }
+        else if (items.getClass().isArray()) {
+            return (Object[]) items;
+        }
+
+        return new Object[0];
+    }
+
 
 }

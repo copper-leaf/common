@@ -7,8 +7,6 @@ import com.eden.common.util.EdenUtils;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Option;
 import com.eden.orchid.api.options.annotations.OptionsData;
-import com.eden.orchid.api.registration.Prioritized;
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class Extractor {
@@ -36,12 +36,12 @@ public abstract class Extractor {
         this.validator = validator;
     }
 
-    public final void extractOptions(Object optionsHolder, JSONObject options) {
+    public final void extractOptions(Object optionsHolder, Map<String, Object> options) {
         // setup initial options
-        JSONObject initialOptions = (options != null) ? new JSONObject(options.toMap()) : new JSONObject();
-        JSONObject archetypalOptions = loadArchetypalData(optionsHolder, initialOptions);
+        Map<String, Object> initialOptions = (options != null) ? new HashMap<>(options) : new HashMap<>();
+        Map<String, Object> archetypalOptions = loadArchetypalData(optionsHolder, initialOptions);
 
-        JSONObject actualOptions = EdenUtils.merge(archetypalOptions, initialOptions);
+        Map<String, Object> actualOptions = EdenUtils.merge(archetypalOptions, initialOptions);
 
         // extract options fields
         EdenPair<Field, Set<Field>> fields = findOptionFields(optionsHolder.getClass());
@@ -117,9 +117,9 @@ public abstract class Extractor {
 // Options Archetypes
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final JSONObject loadArchetypalData(Object target, JSONObject actualOptions) {
+    protected final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
         Class<?> optionsHolderClass = target.getClass();
-        JSONObject allAdditionalData = new JSONObject();
+        Map<String, Object> allAdditionalData = new HashMap<>();
 
         List<Archetype> archetypeAnnotations = new ArrayList<>();
 
@@ -133,17 +133,17 @@ public abstract class Extractor {
         for(Archetype archetype : archetypeAnnotations) {
             OptionArchetype archetypeDataProvider = getInstance(archetype.value());
 
-            JSONObject archetypeConfiguration;
-            if(actualOptions.has(archetype.key()) && actualOptions.get(archetype.key()) instanceof JSONObject) {
-                archetypeConfiguration = actualOptions.getJSONObject(archetype.key());
+            Map<String, Object> archetypeConfiguration;
+            if(actualOptions.containsKey(archetype.key()) && actualOptions.get(archetype.key()) instanceof Map) {
+                archetypeConfiguration = (Map<String, Object>) actualOptions.get(archetype.key());
             }
             else {
-                archetypeConfiguration = new JSONObject();
+                archetypeConfiguration = new HashMap<>();
             }
 
             Extractor extractor = getInstance(Extractor.class);
             extractor.extractOptions(archetypeDataProvider, archetypeConfiguration);
-            JSONObject archetypalData = archetypeDataProvider.getOptions(target, archetype.key());
+            Map<String, Object> archetypalData = archetypeDataProvider.getOptions(target, archetype.key());
 
             if(archetypalData != null) {
                 allAdditionalData = EdenUtils.merge(allAdditionalData, archetypalData);
@@ -156,7 +156,7 @@ public abstract class Extractor {
 // Set option values
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final void setOption(Object optionsHolder, Field field, JSONObject options, String key) {
+    protected final void setOption(Object optionsHolder, Field field, Map<String, Object> options, String key) {
         boolean foundExtractor = false;
         for (OptionExtractor extractor : extractors) {
             if (extractor.acceptsClass(field.getType())) {
@@ -164,7 +164,7 @@ public abstract class Extractor {
                 Object sourceObject = null;
                 Object resultObject = null;
 
-                if(options.has(key)) {
+                if(options.containsKey(key)) {
                     sourceObject = options.get(key);
                     resultObject = extractor.getOption(field, sourceObject, key);
                     if(extractor.isEmptyValue(resultObject)) {

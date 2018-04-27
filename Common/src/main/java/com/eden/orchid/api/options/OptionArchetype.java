@@ -1,9 +1,9 @@
 package com.eden.orchid.api.options;
 
-import org.json.JSONObject;
+import java.util.Map;
 
 public interface OptionArchetype {
 
-    JSONObject getOptions(Object target, String archetypeKey);
+    Map<String, Object> getOptions(Object target, String archetypeKey);
 
 }

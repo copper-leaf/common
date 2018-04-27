@@ -61,7 +61,7 @@ public class DateTimeOptionExtractorTest extends BaseExtractorTest {
         LocalDateTime dateTime = (LocalDateTime) underTest.getClass().getField(optionName).get(underTest);
 
         assertThat(dateTime, is(equalTo(expectedOriginalValue)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
 
         dateTime = ((LocalDateTime) underTest.getClass().getField(optionName).get(underTest)).withNano(0).withSecond(0);
         assertThat(dateTime, is(equalTo(expectedExtractedValue.withNano(0).withSecond(0))));

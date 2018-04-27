@@ -58,7 +58,7 @@ public class BooleanConverterTest {
                 Arguments.of("true",          true,  true),
                 Arguments.of("false",         true,  false),
                 Arguments.of(new JSONArray(), false, false),
-                Arguments.of(null,            true,  false),
+                Arguments.of(null,            false, false),
                 Arguments.of("null",          false, false),
                 Arguments.of(10L,             true,  true),
                 Arguments.of(10.0,            true,  true),

@@ -1,5 +1,6 @@
 package com.eden.orchid.api.options.extractors;
 
+import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.converters.BooleanConverter;
 import com.eden.orchid.api.options.OptionExtractor;
 import com.eden.orchid.api.options.annotations.BooleanDefault;
@@ -35,7 +36,8 @@ public final class BooleanOptionExtractor extends OptionExtractor<Boolean> {
 
     @Override
     public Boolean getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        EdenPair<Boolean, Boolean> result = converter.convert(sourceObject);
+        return (result.first) ? result.second : null;
     }
 
     @Override

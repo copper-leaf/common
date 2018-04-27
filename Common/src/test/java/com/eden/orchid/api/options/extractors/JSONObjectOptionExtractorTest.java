@@ -1,8 +1,8 @@
 package com.eden.orchid.api.options.extractors;
 
+import com.eden.orchid.api.converters.FlexibleMapConverter;
 import com.eden.orchid.api.converters.StringConverter;
 import com.eden.orchid.api.options.annotations.Option;
-import com.eden.orchid.api.converters.FlexibleMapConverter;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,7 +58,7 @@ public class JSONObjectOptionExtractorTest extends BaseExtractorTest {
         }
 
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(expectedOriginalValue)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
         assertThat(expectedExtractedValue.similar(underTest.getClass().getField(optionName).get(underTest)), is(equalTo(true)));
     }
 

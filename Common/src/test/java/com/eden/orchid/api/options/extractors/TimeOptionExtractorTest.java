@@ -63,7 +63,7 @@ public class TimeOptionExtractorTest extends BaseExtractorTest {
         LocalTime time = (LocalTime) underTest.getClass().getField(optionName).get(underTest);
 
         assertThat(time, is(equalTo(expectedOriginalValue)));
-        extractor.extractOptions(underTest, options);
+         extractor.extractOptions(underTest, options.toMap());
 
         time = ((LocalTime) underTest
                 .getClass()

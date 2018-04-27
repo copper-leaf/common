@@ -1,6 +1,5 @@
 package com.eden.orchid.api.options;
 
-import com.caseyjbrooks.clog.Clog;
 import com.eden.orchid.api.converters.ClogStringConverterHelper;
 import com.eden.orchid.api.converters.IntegerConverter;
 import com.eden.orchid.api.converters.StringConverter;
@@ -11,13 +10,13 @@ import com.eden.orchid.api.options.annotations.StringDefault;
 import com.eden.orchid.api.options.extractors.IntOptionExtractor;
 import com.eden.orchid.api.options.extractors.StringOptionExtractor;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -60,11 +59,6 @@ public class ExtractorTest {
     private Extractor extractor;
     private TestOptionsClass testOptionsClass;
 
-    @BeforeAll
-    static void setupAll() {
-        Clog.getInstance().setMinPriority(Clog.Priority.FATAL);
-    }
-
     @BeforeEach
     void setupTest() {
         testOptionsClass = new TestOptionsClass();
@@ -97,7 +91,7 @@ public class ExtractorTest {
 
         String s = "{" + optionName + ": " + sourceValue + "}";
 
-        final JSONObject options = new JSONObject(s);
+        final Map<String, Object> options = new JSONObject(s).toMap();
 
         Object actualOriginalValue = (getterIsMethod)
                 ? testOptionsClass.getClass().getMethod("get" + optionName.substring(0, 1).toUpperCase() + optionName.substring(1)).invoke(testOptionsClass)

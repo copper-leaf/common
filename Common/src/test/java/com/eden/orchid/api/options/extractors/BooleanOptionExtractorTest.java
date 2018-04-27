@@ -76,8 +76,8 @@ public class BooleanOptionExtractorTest extends BaseExtractorTest {
                 Arguments.of(new TestClass1(), false,            false, false),
                 Arguments.of(new TestClass1(), "true",           false, true),
                 Arguments.of(new TestClass1(), "false",          false, false),
-                Arguments.of(new TestClass1(), new JSONObject(), false, false),
-                Arguments.of(new TestClass1(), "null",           false, false),
+                Arguments.of(new TestClass1(), new JSONObject(), false, true),
+                Arguments.of(new TestClass1(), "null",           false, true),
                 Arguments.of(new TestClass1(), null,             false, true),
                 Arguments.of(new TestClass1(), "_nullValue",     false, true),
 
@@ -88,8 +88,8 @@ public class BooleanOptionExtractorTest extends BaseExtractorTest {
                 Arguments.of(new TestClass2(), false,            null, false),
                 Arguments.of(new TestClass2(), "true",           null, true),
                 Arguments.of(new TestClass2(), "false",          null, false),
-                Arguments.of(new TestClass2(), new JSONObject(), null, false),
-                Arguments.of(new TestClass2(), "null",           null, false),
+                Arguments.of(new TestClass2(), new JSONObject(), null, true),
+                Arguments.of(new TestClass2(), "null",           null, true),
                 Arguments.of(new TestClass2(), null,             null, true),
                 Arguments.of(new TestClass2(), "_nullValue",     null, true),
 

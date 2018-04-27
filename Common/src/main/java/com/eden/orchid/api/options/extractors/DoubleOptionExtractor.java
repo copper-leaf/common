@@ -1,5 +1,6 @@
 package com.eden.orchid.api.options.extractors;
 
+import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.converters.DoubleConverter;
 import com.eden.orchid.api.options.OptionExtractor;
 import com.eden.orchid.api.options.annotations.DoubleDefault;
@@ -43,7 +44,8 @@ public final class DoubleOptionExtractor extends OptionExtractor<Double> {
 
     @Override
     public Double getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        EdenPair<Boolean, Double> result = converter.convert(sourceObject);
+        return (result.first) ? result.second : null;
     }
 
     @Override

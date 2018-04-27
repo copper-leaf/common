@@ -1,6 +1,7 @@
 package com.eden.orchid.api.converters;
 
 import com.eden.common.util.EdenPair;
+import com.eden.common.util.EdenUtils;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
             }
             else if (object.getClass().isArray()) {
                 List<Object> list = new ArrayList<>();
-                Collections.addAll(list, (Object[]) object);
+                Collections.addAll(list, EdenUtils.box(object));
                 return new EdenPair<>(true, (Iterable) list);
             }
             else {

@@ -1,9 +1,7 @@
 package com.eden.orchid.api.converters;
 
-import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenPair;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +16,6 @@ public class FlexibleMapConverterTest {
 
     private FlexibleIterableConverter iterableConverter;
     private FlexibleMapConverter underTest;
-
-    @BeforeAll
-    static void setupAll() {
-        Clog.getInstance().setMinPriority(Clog.Priority.FATAL);
-    }
 
     @BeforeEach
     void setupTest() {

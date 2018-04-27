@@ -1,12 +1,13 @@
 package com.eden.orchid.api.options;
 
-import com.caseyjbrooks.clog.Clog;
+import com.eden.orchid.api.options.annotations.BooleanDefault;
 import com.eden.orchid.api.options.annotations.DoubleDefault;
+import com.eden.orchid.api.options.annotations.FloatDefault;
 import com.eden.orchid.api.options.annotations.IntDefault;
+import com.eden.orchid.api.options.annotations.LongDefault;
 import com.eden.orchid.api.options.annotations.Option;
 import com.eden.orchid.api.options.annotations.StringDefault;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,18 +28,22 @@ public class DefaultExtractorTest {
         @Option @IntDefault(5)
         public int intOption;
 
+        @Option @LongDefault(5L)
+        public long longOption;
+
         @Option @DoubleDefault(5.5)
         public double doubleOption;
+
+        @Option @FloatDefault(5.5f)
+        public float floatOption;
+
+        @Option @BooleanDefault(true)
+        public boolean booleanOption;
 
     }
 
     private Extractor extractor;
     private TestOptionsClass testOptionsClass;
-
-    @BeforeAll
-    static void setupAll() {
-        Clog.getInstance().setMinPriority(Clog.Priority.FATAL);
-    }
 
     @BeforeEach
     void setupTest() {
@@ -54,7 +59,7 @@ public class DefaultExtractorTest {
 
         final JSONObject options = new JSONObject(s);
 
-        extractor.extractOptions(testOptionsClass, options);
+        extractor.extractOptions(testOptionsClass, options.toMap());
 
         Object actualExtractedValue = testOptionsClass.getClass().getField(optionName).get(testOptionsClass);
         assertThat(actualExtractedValue, is(equalTo(expectedExtractedValue)));
@@ -66,8 +71,14 @@ public class DefaultExtractorTest {
                 Arguments.of("stringOption",       "'string value'", "string value"),
                 Arguments.of("intOption",          null,             5),
                 Arguments.of("intOption",          10,               10),
+                Arguments.of("longOption",         null,             5L),
+                Arguments.of("longOption",         10,               10L),
                 Arguments.of("doubleOption",       null,             5.5),
-                Arguments.of("doubleOption",       10.2,             10.2)
+                Arguments.of("doubleOption",       10.2,             10.2),
+                Arguments.of("floatOption",        null,             5.5f),
+                Arguments.of("floatOption",        10.2,             10.2f),
+                Arguments.of("booleanOption",      null,             true),
+                Arguments.of("booleanOption",      false,            false)
         );
     }
 

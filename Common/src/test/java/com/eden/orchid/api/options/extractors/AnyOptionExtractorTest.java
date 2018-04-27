@@ -54,7 +54,7 @@ public class AnyOptionExtractorTest extends BaseExtractorTest {
         }
 
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(expectedOriginalValue)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(expectedExtractedValue)));
         if(sourceValue != null) {
             if(sourceValue.toString().equals("_nullValue")) {

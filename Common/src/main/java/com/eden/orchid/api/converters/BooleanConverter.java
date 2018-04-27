@@ -35,7 +35,7 @@ public final class BooleanConverter implements TypeConverter<Boolean> {
     @Override
     public EdenPair<Boolean, Boolean> convert(Object object) {
         if (object == null) {
-            return new EdenPair<>(true, false);
+            return new EdenPair<>(false, false);
         }
 
         if (object instanceof Boolean) {

@@ -1,5 +1,6 @@
 package com.eden.orchid.api.options.extractors;
 
+import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.converters.LongConverter;
 import com.eden.orchid.api.options.OptionExtractor;
 import com.eden.orchid.api.options.annotations.LongDefault;
@@ -43,7 +44,8 @@ public final class LongOptionExtractor extends OptionExtractor<Long> {
 
     @Override
     public Long getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        EdenPair<Boolean, Long> result = converter.convert(sourceObject);
+        return (result.first) ? result.second : null;
     }
 
     @Override

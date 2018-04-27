@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class FlexibleMapConverter implements TypeConverter<Map> {
 
-
     @Inject
     public FlexibleMapConverter() {
     }

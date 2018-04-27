@@ -40,6 +40,11 @@ public final class StringOptionExtractor extends OptionExtractor<String> {
     }
 
     @Override
+    public boolean isEmptyValue(String value) {
+        return EdenUtils.isEmpty(value);
+    }
+
+    @Override
     public String getDefaultValue(Field field) {
         if(field.isAnnotationPresent(StringDefault.class)) {
             String[] defaultValue = field.getAnnotation(StringDefault.class).value();

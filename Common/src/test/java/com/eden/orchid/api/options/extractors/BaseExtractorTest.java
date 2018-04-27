@@ -59,7 +59,7 @@ public abstract class BaseExtractorTest {
         }
 
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(expectedOriginalValue)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(expectedExtractedValue)));
     }
 
@@ -81,7 +81,7 @@ public abstract class BaseExtractorTest {
         }
 
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(null)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
         assertThat((Iterable<Object>) underTest.getClass().getField(optionName).get(underTest), containsInAnyOrder(expectedExtractedValue));
     }
 
@@ -103,7 +103,7 @@ public abstract class BaseExtractorTest {
         }
 
         assertThat(underTest.getClass().getField(optionName).get(underTest), is(equalTo(null)));
-        extractor.extractOptions(underTest, options);
+        extractor.extractOptions(underTest, options.toMap());
         assertThat((Object[]) underTest.getClass().getField(optionName).get(underTest), arrayContainingInAnyOrder(expectedExtractedValue));
     }
 
