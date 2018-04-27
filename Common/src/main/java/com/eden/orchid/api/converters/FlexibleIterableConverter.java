@@ -35,22 +35,22 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
             else if (object.getClass().isArray()) {
                 List<Object> list = new ArrayList<>();
                 Collections.addAll(list, (Object[]) object);
-                return new EdenPair<>(true, list);
+                return new EdenPair<>(true, (Iterable) list);
             }
             else {
                 EdenPair<Boolean, Map> potentialMap = mapConverter.convert(object);
                 if(potentialMap.first) {
                     Map<String, Object> actualMap = (Map<String, Object>) potentialMap.second;
                     List<Object> list = mapToList(actualMap, keyName);
-                    return new EdenPair<>(false, list);
+                    return new EdenPair<>(false, (Iterable) list);
                 }
                 else {
-                    return new EdenPair<>(false, Collections.singletonList(object));
+                    return new EdenPair<>(false, (Iterable) Collections.singletonList(object));
                 }
             }
         }
 
-        return new EdenPair<>(false, new ArrayList());
+        return new EdenPair<>(false, (Iterable) new ArrayList());
     }
 
     private List<Object> mapToList(Map<String, Object> map, String keyName) {

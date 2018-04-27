@@ -27,7 +27,12 @@ public abstract class Extractor {
 
     public Extractor(Collection<OptionExtractor> extractors, OptionsValidator validator) {
         this.extractors = new ArrayList<>(extractors);
-        this.extractors.sort(Comparator.comparing(Prioritized::getPriority).reversed());
+        Collections.sort(this.extractors, new Comparator<OptionExtractor>() {
+            @Override
+            public int compare(OptionExtractor o1, OptionExtractor o2) {
+                return o2.getPriority() - o1.getPriority();
+            }
+        });
         this.validator = validator;
     }
 

@@ -34,15 +34,15 @@ public final class NumberConverter implements TypeConverter<Number> {
         if(object != null) {
             EdenPair<Boolean, Long> longValue = longConverter.convert(object);
             if(longValue.first) {
-                return new EdenPair<>(true, longValue.second);
+                return new EdenPair<>(true, (Number) longValue.second);
             }
             EdenPair<Boolean, Double> doubleValue = doubleConverter.convert(object);
             if(doubleValue.first) {
-                return new EdenPair<>(true, doubleValue.second);
+                return new EdenPair<>(true, (Number) doubleValue.second);
             }
         }
 
-        return new EdenPair<>(false, 0);
+        return new EdenPair<>(false, (Number) 0);
     }
 
 }
