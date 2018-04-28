@@ -32,12 +32,7 @@ public abstract class BaseExtractorTest {
         extractors.add(new ListOptionExtractor(iterableConverter, converters1));
         extractors.add(new ArrayOptionExtractor(iterableConverter, converters1));
 
-        extractor = new Extractor(extractors, null) {
-            @Override
-            protected <T> T getInstance(Class<T> clazz) {
-                return null;
-            }
-        };
+        extractor = new Extractor(extractors, null);
     }
 
     public void testExtractOption(

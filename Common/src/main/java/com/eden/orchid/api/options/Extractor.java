@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class Extractor {
+public class Extractor {
 
     protected final List<OptionExtractor> extractors;
     private final OptionsValidator validator;
@@ -38,6 +38,8 @@ public abstract class Extractor {
     }
 
     public final void extractOptions(Object optionsHolder, Map<String, Object> options) {
+        if(optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
+
         // setup initial options
         Map<String, Object> initialOptions = (options != null) ? new HashMap<>(options) : new HashMap<String, Object>();
         Map<String, Object> archetypalOptions = loadArchetypalData(optionsHolder, initialOptions);
@@ -118,10 +120,8 @@ public abstract class Extractor {
 // Options Archetypes
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
+    protected List<Archetype> getArchetypes(Object target) {
         Class<?> optionsHolderClass = target.getClass();
-        Map<String, Object> allAdditionalData = new HashMap<>();
-
         List<Archetype> archetypeAnnotations = new ArrayList<>();
 
         while (optionsHolderClass != null) {
@@ -129,13 +129,25 @@ public abstract class Extractor {
             if(archetypes != null) {
                 Collections.addAll(archetypeAnnotations, archetypes.value());
             }
+            else {
+                Archetype archetype = optionsHolderClass.getAnnotation(Archetype.class);
+                if(archetype != null) {
+                    archetypeAnnotations.add(archetype);
+                }
+            }
 
             optionsHolderClass = optionsHolderClass.getSuperclass();
         }
 
         Collections.reverse(archetypeAnnotations);
 
-        for(Archetype archetype : archetypeAnnotations) {
+        return archetypeAnnotations;
+    }
+
+    protected final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
+        Map<String, Object> allAdditionalData = new HashMap<>();
+
+        for(Archetype archetype : getArchetypes(target)) {
             OptionArchetype archetypeDataProvider = getInstance(archetype.value());
 
             Map<String, Object> archetypeConfiguration;
@@ -146,8 +158,7 @@ public abstract class Extractor {
                 archetypeConfiguration = new HashMap<>();
             }
 
-            Extractor extractor = getInstance(Extractor.class);
-            extractor.extractOptions(archetypeDataProvider, archetypeConfiguration);
+            this.extractOptions(archetypeDataProvider, archetypeConfiguration);
             Map<String, Object> archetypalData = archetypeDataProvider.getOptions(target, archetype.key());
 
             if(archetypalData != null) {
@@ -249,6 +260,14 @@ public abstract class Extractor {
 // Utils
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected abstract <T> T getInstance(Class<T> clazz);
+    protected <T> T getInstance(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
