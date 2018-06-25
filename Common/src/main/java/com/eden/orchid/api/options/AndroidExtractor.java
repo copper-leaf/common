@@ -17,6 +17,7 @@ import com.eden.orchid.api.options.extractors.AnyOptionExtractor;
 import com.eden.orchid.api.options.extractors.ArrayOptionExtractor;
 import com.eden.orchid.api.options.extractors.BooleanOptionExtractor;
 import com.eden.orchid.api.options.extractors.DoubleOptionExtractor;
+import com.eden.orchid.api.options.extractors.EnumOptionExtractor;
 import com.eden.orchid.api.options.extractors.FloatOptionExtractor;
 import com.eden.orchid.api.options.extractors.IntOptionExtractor;
 import com.eden.orchid.api.options.extractors.ListOptionExtractor;
@@ -82,6 +83,7 @@ public final class AndroidExtractor extends Extractor {
         extractors.add(new ListOptionExtractor(flexibleIterableConverter, converters));
         extractors.add(new LongOptionExtractor(longConverter));
         extractors.add(new StringOptionExtractor(stringConverter));
+        extractors.add(new EnumOptionExtractor(stringConverter));
 
         return extractors;
     }

@@ -7,6 +7,7 @@ import com.eden.orchid.api.options.annotations.IntDefault;
 import com.eden.orchid.api.options.annotations.LongDefault;
 import com.eden.orchid.api.options.annotations.Option;
 import com.eden.orchid.api.options.annotations.StringDefault;
+import com.eden.orchid.api.options.extractors.EnumOptionExtractorTest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +40,9 @@ public class DefaultExtractorTest {
 
         @Option @BooleanDefault(true)
         public boolean booleanOption;
+
+        @Option @StringDefault("Two")
+        public EnumOptionExtractorTest.TestEnumClass enumOption;
 
     }
 
@@ -78,7 +82,10 @@ public class DefaultExtractorTest {
                 Arguments.of("floatOption",        null,             5.5f),
                 Arguments.of("floatOption",        10.2,             10.2f),
                 Arguments.of("booleanOption",      null,             true),
-                Arguments.of("booleanOption",      false,            false)
+                Arguments.of("booleanOption",      false,            false),
+                Arguments.of("enumOption",         "Four",           EnumOptionExtractorTest.TestEnumClass.Four),
+                Arguments.of("enumOption",         null,             EnumOptionExtractorTest.TestEnumClass.Two),
+                Arguments.of("enumOption",         EnumOptionExtractorTest.TestEnumClass.Five, EnumOptionExtractorTest.TestEnumClass.Five)
         );
     }
 
