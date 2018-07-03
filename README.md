@@ -1,5 +1,7 @@
 # Common
 
+[ ![Download](https://api.bintray.com/packages/javaeden/Eden/Common/images/download.svg) ](https://bintray.com/javaeden/Eden/Common/_latestVersion)
+
 A collection of utility classes and tools used throughout other Eden repositories, primarily targeted at type conversion
 and managing options. This library targets Java 7 and works on Android, as well as plan Java projects.
 

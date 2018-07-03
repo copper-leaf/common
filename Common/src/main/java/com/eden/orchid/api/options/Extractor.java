@@ -1,13 +1,12 @@
 package com.eden.orchid.api.options;
 
 import com.caseyjbrooks.clog.Clog;
-import com.eden.common.json.JSONElement;
 import com.eden.common.util.EdenPair;
 import com.eden.common.util.EdenUtils;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.Option;
-import com.eden.orchid.api.options.annotations.OptionsData;
+import com.eden.orchid.api.options.annotations.AllOptions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -50,7 +49,7 @@ public class Extractor {
         EdenPair<Field, Set<Field>> fields = findOptionFields(optionsHolder.getClass());
 
         if(fields.first != null) {
-            setOptionValue(optionsHolder, fields.first, fields.first.getName(), JSONElement.class, new JSONElement(actualOptions));
+            setOptionValue(optionsHolder, fields.first, fields.first.getName(), Map.class, actualOptions);
         }
 
         for (Field field : fields.second) {
@@ -103,7 +102,7 @@ public class Extractor {
                     for (Field field : declaredFields) {
                         if (field.isAnnotationPresent(Option.class)) {
                             fields.add(field);
-                        } else if (field.isAnnotationPresent(OptionsData.class) && field.getType().equals(JSONElement.class)) {
+                        } else if (field.isAnnotationPresent(AllOptions.class) && field.getType().equals(Map.class)) {
                             optionsDataField = field;
                         }
                     }

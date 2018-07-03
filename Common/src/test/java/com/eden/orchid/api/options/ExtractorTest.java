@@ -1,10 +1,12 @@
 package com.eden.orchid.api.options;
 
+import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenUtils;
 import com.eden.orchid.api.converters.ClogStringConverterHelper;
 import com.eden.orchid.api.converters.IntegerConverter;
 import com.eden.orchid.api.converters.StringConverter;
 import com.eden.orchid.api.converters.StringConverterHelper;
+import com.eden.orchid.api.options.annotations.AllOptions;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.IntDefault;
@@ -28,6 +30,13 @@ import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
 public class ExtractorTest {
+
+    public static class AllOptionsTestClass {
+
+        @AllOptions
+        public Map<String, Object> allOptions;
+
+    }
 
     public static class ParentTestOptionsClass {
 
@@ -120,6 +129,24 @@ public class ExtractorTest {
                 Arguments.of("parentIntOption", false, null, 0, 5),
                 Arguments.of("parentIntOption", false, 10, 0, 10),
                 Arguments.of("beanSetter", true, "passed value", null, "setter value")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOptionsArgumentsForAllOptionsTest")
+    void testExtractStringOptionForAllOptions(final String inputJson) throws Throwable {
+        Clog.getInstance().setMinPriority(Clog.Priority.VERBOSE);
+        AllOptionsTestClass testOptionsClass = new AllOptionsTestClass();
+
+        extractor.extractOptions(testOptionsClass, new JSONObject(inputJson).toMap());
+
+        assertThat(new JSONObject(testOptionsClass.allOptions).similar(new JSONObject(inputJson)), is(equalTo(true)));
+    }
+
+    static Stream<Arguments> getOptionsArgumentsForAllOptionsTest() {
+        return Stream.of(
+                Arguments.of("{\"stringOption\": \"one\"}"),
+                Arguments.of("{\"intOption\": 1}")
         );
     }
 
