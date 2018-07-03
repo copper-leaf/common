@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
 
@@ -33,7 +34,7 @@ public class BooleanConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(Boolean.class)));
+        assertThat(underTest.acceptsClass(Boolean.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

@@ -23,8 +23,8 @@ public final class LongConverter implements TypeConverter<Long> {
     }
 
     @Override
-    public Class<Long> resultClass() {
-        return Long.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Long.class) || clazz.equals(long.class);
     }
 
     @Override

@@ -23,8 +23,8 @@ public final class IntegerConverter implements TypeConverter<Integer> {
     }
 
     @Override
-    public Class<Integer> resultClass() {
-        return Integer.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Integer.class) || clazz.equals(int.class);
     }
 
     @Override

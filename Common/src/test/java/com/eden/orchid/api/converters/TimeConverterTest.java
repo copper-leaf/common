@@ -34,7 +34,7 @@ public class TimeConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(LocalTime.class)));
+        assertThat(underTest.acceptsClass(LocalTime.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

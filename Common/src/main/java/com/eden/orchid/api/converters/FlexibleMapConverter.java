@@ -14,8 +14,9 @@ public class FlexibleMapConverter implements TypeConverter<Map> {
     public FlexibleMapConverter() {
     }
 
-    public Class<Map> resultClass() {
-        return Map.class;
+    @Override
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Map.class);
     }
 
     @Override

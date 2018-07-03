@@ -32,7 +32,7 @@ public class NumberConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(Number.class)));
+        assertThat(underTest.acceptsClass(Number.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

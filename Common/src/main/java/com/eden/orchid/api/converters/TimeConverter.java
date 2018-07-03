@@ -25,8 +25,8 @@ public final class TimeConverter implements TypeConverter<LocalTime> {
     }
 
     @Override
-    public Class<LocalTime> resultClass() {
-        return LocalTime.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(LocalTime.class);
     }
 
     @Override

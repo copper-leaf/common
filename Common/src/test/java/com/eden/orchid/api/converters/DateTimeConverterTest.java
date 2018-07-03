@@ -33,7 +33,7 @@ public class DateTimeConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(LocalDateTime.class)));
+        assertThat(underTest.acceptsClass(LocalDateTime.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

@@ -24,8 +24,8 @@ public final class StringConverter implements TypeConverter<String> {
     }
 
     @Override
-    public Class<String> resultClass() {
-        return String.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(String.class);
     }
 
     @Override

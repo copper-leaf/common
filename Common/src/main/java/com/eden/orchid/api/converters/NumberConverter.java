@@ -25,8 +25,8 @@ public final class NumberConverter implements TypeConverter<Number> {
     }
 
     @Override
-    public Class<Number> resultClass() {
-        return Number.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Number.class);
     }
 
     @Override

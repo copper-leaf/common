@@ -34,7 +34,7 @@ public class DateConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(LocalDate.class)));
+        assertThat(underTest.acceptsClass(LocalDate.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

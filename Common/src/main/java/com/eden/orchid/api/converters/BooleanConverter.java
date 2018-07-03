@@ -28,8 +28,8 @@ public final class BooleanConverter implements TypeConverter<Boolean> {
     }
 
     @Override
-    public Class<Boolean> resultClass() {
-        return Boolean.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Boolean.class) || clazz.equals(boolean.class);
     }
 
     @Override

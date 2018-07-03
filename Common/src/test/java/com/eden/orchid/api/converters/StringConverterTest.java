@@ -80,7 +80,7 @@ public class StringConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(String.class)));
+        assertThat(underTest.acceptsClass(String.class), is(equalTo(true)));
     }
 
 }

@@ -27,8 +27,8 @@ public final class DateTimeConverter implements TypeConverter<LocalDateTime> {
     }
 
     @Override
-    public Class<LocalDateTime> resultClass() {
-        return LocalDateTime.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(LocalDateTime.class);
     }
 
     @Override

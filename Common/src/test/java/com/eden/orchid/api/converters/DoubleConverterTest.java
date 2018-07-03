@@ -31,7 +31,7 @@ public class DoubleConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(Double.class)));
+        assertThat(underTest.acceptsClass(Double.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

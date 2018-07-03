@@ -31,7 +31,7 @@ public class FloatConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(Float.class)));
+        assertThat(underTest.acceptsClass(Float.class), is(equalTo(true)));
     }
 
     @ParameterizedTest

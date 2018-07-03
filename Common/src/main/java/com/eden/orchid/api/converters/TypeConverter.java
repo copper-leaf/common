@@ -4,7 +4,7 @@ import com.eden.common.util.EdenPair;
 
 public interface TypeConverter<T> {
 
-    Class<T> resultClass();
+    boolean acceptsClass(Class clazz);
 
     EdenPair<Boolean, T> convert(Object object);
 

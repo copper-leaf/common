@@ -23,8 +23,8 @@ public final class FloatConverter implements TypeConverter<Float> {
     }
 
     @Override
-    public Class<Float> resultClass() {
-        return Float.class;
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Float.class) || clazz.equals(float.class);
     }
 
     @Override

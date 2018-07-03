@@ -19,8 +19,9 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
         this.mapConverter = mapConverter;
     }
 
-    public Class<Iterable> resultClass() {
-        return Iterable.class;
+    @Override
+    public boolean acceptsClass(Class clazz) {
+        return clazz.equals(Iterable.class);
     }
 
     @Override

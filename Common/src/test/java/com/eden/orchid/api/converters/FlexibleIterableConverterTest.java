@@ -30,7 +30,7 @@ public class FlexibleIterableConverterTest {
 
     @Test
     void testResultClass() {
-        assertThat(underTest.resultClass(), is(equalTo(Iterable.class)));
+        assertThat(underTest.acceptsClass(Iterable.class), is(equalTo(true)));
     }
 
     @Test

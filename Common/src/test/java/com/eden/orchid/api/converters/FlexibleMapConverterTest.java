@@ -25,7 +25,7 @@ public class FlexibleMapConverterTest {
 
     @Test
     void testResultClass() {
-        assertThat(underTest.resultClass(), is(equalTo(Map.class)));
+        assertThat(underTest.acceptsClass(Map.class), is(equalTo(true)));
     }
 
     @Test

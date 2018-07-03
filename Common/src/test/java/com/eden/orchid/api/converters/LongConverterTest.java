@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
 
@@ -31,7 +32,7 @@ public class LongConverterTest {
 
     @Test
     public void testResultClass() throws Throwable {
-        assertThat(underTest.resultClass(), is(equalTo(Long.class)));
+        assertThat(underTest.acceptsClass(Long.class), is(equalTo(true)));
     }
 
     @ParameterizedTest
