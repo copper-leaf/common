@@ -30,13 +30,13 @@ public final class NumberConverter implements TypeConverter<Number> {
     }
 
     @Override
-    public EdenPair<Boolean, Number> convert(Object object) {
-        if(object != null) {
-            EdenPair<Boolean, Long> longValue = longConverter.convert(object);
+    public EdenPair<Boolean, Number> convert(Class clazz, Object objectToConvert) {
+        if(objectToConvert != null) {
+            EdenPair<Boolean, Long> longValue = longConverter.convert(clazz, objectToConvert);
             if(longValue.first) {
                 return new EdenPair<>(true, (Number) longValue.second);
             }
-            EdenPair<Boolean, Double> doubleValue = doubleConverter.convert(object);
+            EdenPair<Boolean, Double> doubleValue = doubleConverter.convert(clazz, objectToConvert);
             if(doubleValue.first) {
                 return new EdenPair<>(true, (Number) doubleValue.second);
             }

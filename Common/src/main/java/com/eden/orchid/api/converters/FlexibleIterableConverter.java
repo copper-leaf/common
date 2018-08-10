@@ -25,29 +25,29 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
     }
 
     @Override
-    public EdenPair<Boolean, Iterable> convert(Object object) {
-        return convert(object, null);
+    public EdenPair<Boolean, Iterable> convert(Class clazz, Object objectToConvert) {
+        return convert(clazz, objectToConvert, null);
     }
 
-    public EdenPair<Boolean, Iterable> convert(Object object, String keyName) {
-        if(object != null) {
-            if (object instanceof Iterable) {
-                return new EdenPair<>(true, (Iterable) object);
+    public EdenPair<Boolean, Iterable> convert(Class clazz, Object objectToConvert, String keyName) {
+        if(objectToConvert != null) {
+            if (objectToConvert instanceof Iterable) {
+                return new EdenPair<>(true, (Iterable) objectToConvert);
             }
-            else if (object.getClass().isArray()) {
+            else if (objectToConvert.getClass().isArray()) {
                 List<Object> list = new ArrayList<>();
-                Collections.addAll(list, EdenUtils.box(object));
+                Collections.addAll(list, EdenUtils.box(objectToConvert));
                 return new EdenPair<>(true, (Iterable) list);
             }
             else {
-                EdenPair<Boolean, Map> potentialMap = mapConverter.convert(object);
+                EdenPair<Boolean, Map> potentialMap = mapConverter.convert(clazz, objectToConvert);
                 if(potentialMap.first) {
                     Map<String, Object> actualMap = (Map<String, Object>) potentialMap.second;
-                    List<Object> list = mapToList(actualMap, keyName);
+                    List<Object> list = mapToList(clazz, actualMap, keyName);
                     return new EdenPair<>(false, (Iterable) list);
                 }
                 else {
-                    return new EdenPair<>(false, (Iterable) Collections.singletonList(object));
+                    return new EdenPair<>(false, (Iterable) Collections.singletonList(objectToConvert));
                 }
             }
         }
@@ -55,13 +55,13 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
         return new EdenPair<>(false, (Iterable) new ArrayList());
     }
 
-    private List<Object> mapToList(Map<String, Object> map, String keyName) {
+    private List<Object> mapToList(Class clazz, Map<String, Object> map, String keyName) {
         List<Object> list = new ArrayList<>();
 
         for(String key : map.keySet()) {
             Object item = map.get(key);
 
-            EdenPair<Boolean, Map> potentialMapItem = mapConverter.convert(item);
+            EdenPair<Boolean, Map> potentialMapItem = mapConverter.convert(clazz, item);
             if(potentialMapItem.first) {
                 Map<String, Object> mapItem = new HashMap<>((Map<String, Object>) potentialMapItem.second);
                 mapItem.put(keyName, key);

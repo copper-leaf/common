@@ -33,16 +33,16 @@ public final class BooleanConverter implements TypeConverter<Boolean> {
     }
 
     @Override
-    public EdenPair<Boolean, Boolean> convert(Object object) {
-        if (object == null) {
+    public EdenPair<Boolean, Boolean> convert(Class clazz, Object objectToConvert) {
+        if (objectToConvert == null) {
             return new EdenPair<>(false, false);
         }
 
-        if (object instanceof Boolean) {
-            return new EdenPair<>(true, (Boolean) object);
+        if (objectToConvert instanceof Boolean) {
+            return new EdenPair<>(true, (Boolean) objectToConvert);
         }
-        if (object instanceof String) {
-            String s = stringConverter.convert(object).second;
+        if (objectToConvert instanceof String) {
+            String s = stringConverter.convert(clazz, objectToConvert).second;
             if (s.equalsIgnoreCase("true")) {
                 return new EdenPair<>(true, true);
             }
@@ -51,7 +51,7 @@ public final class BooleanConverter implements TypeConverter<Boolean> {
             }
         }
 
-        EdenPair<Boolean, Number> numberValue = numberConverter.convert(object);
+        EdenPair<Boolean, Number> numberValue = numberConverter.convert(clazz, objectToConvert);
         if (numberValue.first) {
             if (numberValue.second.doubleValue() == 0) {
                 return new EdenPair<>(true, false);

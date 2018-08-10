@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
 
@@ -43,7 +42,7 @@ public class BooleanConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final boolean expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, Boolean> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, Boolean> result = underTest.convert(Boolean.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second, is(equalTo(expectedExtractedValue)));
     }

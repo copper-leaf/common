@@ -28,9 +28,9 @@ public final class LongConverter implements TypeConverter<Long> {
     }
 
     @Override
-    public EdenPair<Boolean, Long> convert(Object object) {
+    public EdenPair<Boolean, Long> convert(Class clazz, Object objectToConvert) {
         try {
-            return new EdenPair<>(true, Long.parseLong(stringConverter.convert(object).second));
+            return new EdenPair<>(true, Long.parseLong(stringConverter.convert(clazz, objectToConvert).second));
         }
         catch (NumberFormatException e) {
             return new EdenPair<>(false, 0L);

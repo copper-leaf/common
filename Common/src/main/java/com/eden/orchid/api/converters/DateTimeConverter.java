@@ -32,18 +32,18 @@ public final class DateTimeConverter implements TypeConverter<LocalDateTime> {
     }
 
     @Override
-    public EdenPair<Boolean, LocalDateTime> convert(Object object) {
-        if(object instanceof LocalDate) {
-            return new EdenPair<>(true, ((LocalDate) object).atTime(LocalTime.now()));
+    public EdenPair<Boolean, LocalDateTime> convert(Class clazz, Object objectToConvert) {
+        if(objectToConvert instanceof LocalDate) {
+            return new EdenPair<>(true, ((LocalDate) objectToConvert).atTime(LocalTime.now()));
         }
-        else if(object instanceof LocalTime) {
-            return new EdenPair<>(true, ((LocalTime) object).atDate(LocalDate.now()));
+        else if(objectToConvert instanceof LocalTime) {
+            return new EdenPair<>(true, ((LocalTime) objectToConvert).atDate(LocalDate.now()));
         }
-        else if(object instanceof LocalDateTime) {
-            return new EdenPair<>(true, ((LocalDateTime) object));
+        else if(objectToConvert instanceof LocalDateTime) {
+            return new EdenPair<>(true, ((LocalDateTime) objectToConvert));
         }
         else {
-            String dateTimeString = stringConverter.convert(object).second;
+            String dateTimeString = stringConverter.convert(clazz, objectToConvert).second;
 
             if(dateTimeString.equalsIgnoreCase("now")) {
                 return new EdenPair<>(true, LocalDateTime.now());

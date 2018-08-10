@@ -30,8 +30,8 @@ public final class TimeConverter implements TypeConverter<LocalTime> {
     }
 
     @Override
-    public EdenPair<Boolean, LocalTime> convert(Object object) {
-        EdenPair<Boolean, LocalDateTime> dateTime = converter.convert(object);
+    public EdenPair<Boolean, LocalTime> convert(Class clazz, Object objectToConvert) {
+        EdenPair<Boolean, LocalDateTime> dateTime = converter.convert(clazz, objectToConvert);
 
         return new EdenPair<>(dateTime.first, dateTime.second.toLocalTime());
     }

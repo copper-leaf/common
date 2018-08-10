@@ -49,7 +49,7 @@ public class StringConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final Object expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, String> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, String> result = underTest.convert(String.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second, is(equalTo(expectedExtractedValue)));
     }
@@ -67,7 +67,7 @@ public class StringConverterTest {
 
     @Test
     public void testHelpersCalled() throws Throwable {
-        EdenPair<Boolean, String> result = underTest.convert("input");
+        EdenPair<Boolean, String> result = underTest.convert(String.class, "input");
         assertThat(result.first, is(equalTo(true)));
         assertThat(result.second, is(equalTo("input")));
 

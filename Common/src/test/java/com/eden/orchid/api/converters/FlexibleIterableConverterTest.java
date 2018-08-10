@@ -37,7 +37,7 @@ public class FlexibleIterableConverterTest {
     void testNull() {
         String source = null;
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Iterable<String>) result.second, is(not(nullValue())));
@@ -48,7 +48,7 @@ public class FlexibleIterableConverterTest {
     void testSingleItem() {
         String source = "test";
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -58,7 +58,7 @@ public class FlexibleIterableConverterTest {
     void testArray() {
         String[] source = new String[] {"test"};
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -70,7 +70,7 @@ public class FlexibleIterableConverterTest {
         Set<String> source = new HashSet<>();
         source.add("test");
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -82,7 +82,7 @@ public class FlexibleIterableConverterTest {
         List<String> source = new ArrayList<>();
         source.add("test");
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -98,7 +98,7 @@ public class FlexibleIterableConverterTest {
             }
         };
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -110,7 +110,7 @@ public class FlexibleIterableConverterTest {
         Map<String, String> source = new HashMap<>();
         source.put("key", "test");
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source);
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Iterable<String>) result.second, containsInAnyOrder("test"));
@@ -123,7 +123,7 @@ public class FlexibleIterableConverterTest {
         object.put("key", "test");
         source.put("otherKey", object);
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source, "newKey");
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey");
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Iterable<Map<String, String>>) result.second, is(notNullValue()));
@@ -141,7 +141,7 @@ public class FlexibleIterableConverterTest {
         object.put("key", "test");
         source.put("otherKey", object);
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(source, "newKey");
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey");
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Iterable<JSONObject>) result.second, is(notNullValue()));

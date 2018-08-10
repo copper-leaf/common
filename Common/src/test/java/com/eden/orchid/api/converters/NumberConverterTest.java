@@ -41,7 +41,7 @@ public class NumberConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final Number expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, Number> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, Number> result = underTest.convert(Number.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second.doubleValue(), is(equalTo(expectedExtractedValue.doubleValue())));
     }

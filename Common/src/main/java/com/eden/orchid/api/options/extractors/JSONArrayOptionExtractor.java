@@ -44,7 +44,7 @@ public final class JSONArrayOptionExtractor extends OptionExtractor<JSONArray> {
 
     @Override
     public JSONArray getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Iterable> value = converter.convert(sourceObject);
+        EdenPair<Boolean, Iterable> value = converter.convert(field.getType(), sourceObject);
 
         JSONArray jsonArray = new JSONArray();
 

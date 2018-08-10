@@ -49,7 +49,7 @@ public final class ArrayOptionExtractor extends OptionExtractor<String[]> {
 
     @Override
     public String[] getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Iterable> value = converter.convert(sourceObject);
+        EdenPair<Boolean, Iterable> value = converter.convert(field.getType(), sourceObject);
 
         List<Object> list = new ArrayList<>();
 

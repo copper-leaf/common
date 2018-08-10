@@ -29,9 +29,9 @@ public final class StringConverter implements TypeConverter<String> {
     }
 
     @Override
-    public EdenPair<Boolean, String> convert(Object object) {
-        if(object != null) {
-            String input = object.toString();
+    public EdenPair<Boolean, String> convert(Class clazz, Object objectToConvert) {
+        if(objectToConvert != null) {
+            String input = objectToConvert.toString();
             for(StringConverterHelper helper : helpers) {
                 if(helper.matches(input)) {
                     input = helper.convert(input);

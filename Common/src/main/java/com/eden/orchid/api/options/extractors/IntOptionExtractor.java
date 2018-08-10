@@ -44,7 +44,7 @@ public final class IntOptionExtractor extends OptionExtractor<Integer> {
 
     @Override
     public Integer getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Integer> result = converter.convert(sourceObject);
+        EdenPair<Boolean, Integer> result = converter.convert(field.getType(), sourceObject);
         return (result.first) ? result.second : null;
     }
 

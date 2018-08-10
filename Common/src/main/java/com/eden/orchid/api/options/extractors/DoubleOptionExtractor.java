@@ -44,7 +44,7 @@ public final class DoubleOptionExtractor extends OptionExtractor<Double> {
 
     @Override
     public Double getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Double> result = converter.convert(sourceObject);
+        EdenPair<Boolean, Double> result = converter.convert(field.getType(), sourceObject);
         return (result.first) ? result.second : null;
     }
 

@@ -35,7 +35,7 @@ public final class DateOptionExtractor extends OptionExtractor<LocalDate> {
 
     @Override
     public LocalDate getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second.toLocalDate();
+        return converter.convert(field.getType(), sourceObject).second.toLocalDate();
     }
 
     @Override

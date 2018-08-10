@@ -32,7 +32,7 @@ public class FlexibleMapConverterTest {
     void testNull() {
         String source = null;
 
-        EdenPair<Boolean, Map> result = underTest.convert(source);
+        EdenPair<Boolean, Map> result = underTest.convert(Map.class, source);
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Map<Object, String>) result.second, is(not(nullValue())));
@@ -43,7 +43,7 @@ public class FlexibleMapConverterTest {
     void testSingleItem() {
         String source = "test";
 
-        EdenPair<Boolean, Map> result = underTest.convert(source);
+        EdenPair<Boolean, Map> result = underTest.convert(Map.class, source);
 
         assertThat(result.first, is(equalTo(false)));
         assertThat((Map<Object, String>) result.second, is(not(nullValue())));
@@ -56,7 +56,7 @@ public class FlexibleMapConverterTest {
         Map<String, String> source = new HashMap<>();
         source.put("key", "test");
 
-        EdenPair<Boolean, Map> result = underTest.convert(source);
+        EdenPair<Boolean, Map> result = underTest.convert(Map.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Collection<Object>) result.second.keySet(), containsInAnyOrder(new Object[]{"key"}));
@@ -69,7 +69,7 @@ public class FlexibleMapConverterTest {
         JSONObject source = new JSONObject();
         source.put("key", "test");
 
-        EdenPair<Boolean, Map> result = underTest.convert(source);
+        EdenPair<Boolean, Map> result = underTest.convert(Map.class, source);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Collection<Object>) result.second.keySet(), containsInAnyOrder(new Object[]{"key"}));

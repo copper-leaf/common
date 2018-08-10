@@ -24,7 +24,7 @@ public class EnumOptionExtractor extends OptionExtractor<Object> {
 
     @Override
     public Object getOption(Field field, Object sourceObject, String key) {
-        String converted = converter.convert(sourceObject).second;
+        String converted = converter.convert(field.getType(), sourceObject).second;
         return getEnumValue(field.getType(), converted);
     }
 

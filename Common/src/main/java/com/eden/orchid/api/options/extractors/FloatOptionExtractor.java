@@ -44,7 +44,7 @@ public final class FloatOptionExtractor extends OptionExtractor<Float> {
 
     @Override
     public Float getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Float> result = converter.convert(sourceObject);
+        EdenPair<Boolean, Float> result = converter.convert(field.getType(), sourceObject);
         return (result.first) ? result.second : null;
     }
 

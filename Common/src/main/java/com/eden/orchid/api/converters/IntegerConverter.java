@@ -28,9 +28,9 @@ public final class IntegerConverter implements TypeConverter<Integer> {
     }
 
     @Override
-    public EdenPair<Boolean, Integer> convert(Object object) {
+    public EdenPair<Boolean, Integer> convert(Class clazz, Object objectToConvert) {
         try {
-            return new EdenPair<>(true, Integer.parseInt(stringConverter.convert(object).second));
+            return new EdenPair<>(true, Integer.parseInt(stringConverter.convert(clazz, objectToConvert).second));
         }
         catch (NumberFormatException e) {
             return new EdenPair<>(false, 0);

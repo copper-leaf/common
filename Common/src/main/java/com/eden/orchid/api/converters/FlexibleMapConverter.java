@@ -20,11 +20,11 @@ public class FlexibleMapConverter implements TypeConverter<Map> {
     }
 
     @Override
-    public EdenPair<Boolean, Map> convert(Object object) {
-        return convert(object, null);
+    public EdenPair<Boolean, Map> convert(Class clazz, Object objectToConvert) {
+        return convert(clazz, objectToConvert, null);
     }
 
-    public EdenPair<Boolean, Map> convert(Object object, String keyName) {
+    public EdenPair<Boolean, Map> convert(Class clazz, Object object, String keyName) {
         if(object != null) {
             if (object instanceof Map) {
                 return new EdenPair<>(true, (Map) object);

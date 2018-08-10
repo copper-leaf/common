@@ -17,7 +17,7 @@ public class Converters {
     public <T> EdenPair<Boolean, T> convert(Object object, Class<T> targetClass) {
         for(TypeConverter converter : converters) {
             if(converter.acceptsClass(targetClass)) {
-                return (EdenPair<Boolean, T>) converter.convert(object);
+                return (EdenPair<Boolean, T>) converter.convert(targetClass, object);
             }
         }
 

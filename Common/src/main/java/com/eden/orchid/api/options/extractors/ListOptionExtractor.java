@@ -56,7 +56,7 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
 
     @Override
     public List getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Iterable> value = converter.convert(sourceObject);
+        EdenPair<Boolean, Iterable> value = converter.convert(field.getType(), sourceObject);
 
         List<Object> list = new ArrayList<>();
 

@@ -36,7 +36,7 @@ public final class BooleanOptionExtractor extends OptionExtractor<Boolean> {
 
     @Override
     public Boolean getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Boolean> result = converter.convert(sourceObject);
+        EdenPair<Boolean, Boolean> result = converter.convert(field.getType(), sourceObject);
         return (result.first) ? result.second : null;
     }
 

@@ -44,7 +44,7 @@ public final class LongOptionExtractor extends OptionExtractor<Long> {
 
     @Override
     public Long getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Long> result = converter.convert(sourceObject);
+        EdenPair<Boolean, Long> result = converter.convert(field.getType(), sourceObject);
         return (result.first) ? result.second : null;
     }
 

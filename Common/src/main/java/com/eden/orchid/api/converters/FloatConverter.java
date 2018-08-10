@@ -28,9 +28,9 @@ public final class FloatConverter implements TypeConverter<Float> {
     }
 
     @Override
-    public EdenPair<Boolean, Float> convert(Object object) {
+    public EdenPair<Boolean, Float> convert(Class clazz, Object objectToConvert) {
         try {
-            return new EdenPair<>(true, Float.parseFloat(stringConverter.convert(object).second));
+            return new EdenPair<>(true, Float.parseFloat(stringConverter.convert(clazz, objectToConvert).second));
         }
         catch (NumberFormatException e) {
             return new EdenPair<>(false, 0.0f);

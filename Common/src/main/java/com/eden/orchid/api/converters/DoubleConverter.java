@@ -1,10 +1,8 @@
 package com.eden.orchid.api.converters;
 
 import com.eden.common.util.EdenPair;
-import com.eden.orchid.api.options.annotations.DoubleDefault;
 
 import javax.inject.Inject;
-import java.time.LocalDateTime;
 
 /**
  * | Input  | Result                  | Converter |
@@ -30,9 +28,9 @@ public final class DoubleConverter implements TypeConverter<Double> {
     }
 
     @Override
-    public EdenPair<Boolean, Double> convert(Object object) {
+    public EdenPair<Boolean, Double> convert(Class clazz, Object objectToConvert) {
         try {
-            return new EdenPair<>(true, Double.parseDouble(stringConverter.convert(object).second));
+            return new EdenPair<>(true, Double.parseDouble(stringConverter.convert(clazz, objectToConvert).second));
         }
         catch (NumberFormatException e) {
             return new EdenPair<>(false, 0.0);

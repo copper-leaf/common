@@ -40,7 +40,7 @@ public class FloatConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final Object expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, Float> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, Float> result = underTest.convert(Float.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second, is(equalTo(expectedExtractedValue)));
     }

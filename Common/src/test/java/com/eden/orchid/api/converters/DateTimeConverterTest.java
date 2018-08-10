@@ -42,7 +42,7 @@ public class DateTimeConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final LocalDateTime expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, LocalDateTime> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, LocalDateTime> result = underTest.convert(LocalDateTime.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second.withSecond(0).withNano(0), is(equalTo(expectedExtractedValue.withSecond(0).withNano(0))));
     }

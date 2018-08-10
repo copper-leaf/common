@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.stream.Stream;
 
@@ -41,7 +40,7 @@ public class IntegerConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final Object expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, Integer> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, Integer> result = underTest.convert(Integer.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second, is(equalTo(expectedExtractedValue)));
     }

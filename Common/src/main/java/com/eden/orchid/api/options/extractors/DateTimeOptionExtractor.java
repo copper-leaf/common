@@ -35,7 +35,7 @@ public final class DateTimeOptionExtractor extends OptionExtractor<LocalDateTime
 
     @Override
     public LocalDateTime getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        return converter.convert(field.getType(), sourceObject).second;
     }
 
     @Override

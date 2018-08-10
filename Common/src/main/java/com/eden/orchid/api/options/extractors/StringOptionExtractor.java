@@ -36,7 +36,7 @@ public final class StringOptionExtractor extends OptionExtractor<String> {
 
     @Override
     public String getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        return converter.convert(field.getType(), sourceObject).second;
     }
 
     @Override

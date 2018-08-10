@@ -6,6 +6,6 @@ public interface TypeConverter<T> {
 
     boolean acceptsClass(Class clazz);
 
-    EdenPair<Boolean, T> convert(Object object);
+    EdenPair<Boolean, T> convert(Class clazz, Object objectToConvert);
 
 }

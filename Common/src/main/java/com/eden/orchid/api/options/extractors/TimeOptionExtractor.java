@@ -36,7 +36,7 @@ public final class TimeOptionExtractor extends OptionExtractor<LocalTime> {
 
     @Override
     public LocalTime getOption(Field field, Object sourceObject, String key) {
-        return converter.convert(sourceObject).second;
+        return converter.convert(field.getType(), sourceObject).second;
     }
 
     @Override

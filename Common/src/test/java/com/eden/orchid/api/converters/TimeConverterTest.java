@@ -43,7 +43,7 @@ public class TimeConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final LocalTime expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, LocalTime> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, LocalTime> result = underTest.convert(LocalTime.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second.withSecond(0).withNano(0), is(equalTo(expectedExtractedValue.withSecond(0).withNano(0))));
     }

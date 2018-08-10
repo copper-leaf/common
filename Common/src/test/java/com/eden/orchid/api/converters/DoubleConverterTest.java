@@ -40,7 +40,7 @@ public class DoubleConverterTest {
             final Object sourceValue,
             final Object expectedSuccessful,
             final Object expectedExtractedValue) throws Throwable {
-        EdenPair<Boolean, Double> result = underTest.convert(sourceValue);
+        EdenPair<Boolean, Double> result = underTest.convert(Double.class, sourceValue);
         assertThat(result.first, is(equalTo(expectedSuccessful)));
         assertThat(result.second, is(equalTo(expectedExtractedValue)));
     }
