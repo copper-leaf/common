@@ -3,10 +3,10 @@ package com.eden.orchid.api.options;
 import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenPair;
 import com.eden.common.util.EdenUtils;
+import com.eden.orchid.api.options.annotations.AllOptions;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.Option;
-import com.eden.orchid.api.options.annotations.AllOptions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,13 +26,14 @@ public class Extractor {
     private final OptionsValidator validator;
 
     public Extractor(Collection<OptionExtractor> extractors, OptionsValidator validator) {
-        this.extractors = new ArrayList<>(extractors);
-        Collections.sort(this.extractors, new Comparator<OptionExtractor>() {
+        List<OptionExtractor> originalExtractors = new ArrayList<>(extractors);
+        Collections.sort(originalExtractors, new Comparator<OptionExtractor>() {
             @Override
             public int compare(OptionExtractor o1, OptionExtractor o2) {
                 return o2.getPriority() - o1.getPriority();
             }
         });
+        this.extractors = Collections.unmodifiableList(originalExtractors);
         this.validator = validator;
     }
 
@@ -259,7 +260,7 @@ public class Extractor {
 // Utils
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected <T> T getInstance(Class<T> clazz) {
+    public <T> T getInstance(Class<T> clazz) {
         try {
             return clazz.newInstance();
         }

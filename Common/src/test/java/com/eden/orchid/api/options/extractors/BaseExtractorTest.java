@@ -21,18 +21,23 @@ public abstract class BaseExtractorTest {
     protected Extractor extractor;
 
     public void setupTest(OptionExtractor extractorUnderTest, TypeConverter... converters) {
+        setupTest(new OptionExtractor[]{extractorUnderTest}, converters);
+    }
+
+    public void setupTest(OptionExtractor[] extractorsArray, TypeConverter[] convertersArray) {
         FlexibleMapConverter mapConverter = new FlexibleMapConverter();
         FlexibleIterableConverter iterableConverter = new FlexibleIterableConverter(mapConverter);
 
-        List<OptionExtractor> extractors = new ArrayList<>();
-        extractors.add(extractorUnderTest);
+        List<TypeConverter> convertersList = new ArrayList<>(Arrays.asList(convertersArray));
+        convertersList.add(iterableConverter);
+        convertersList.add(iterableConverter);
+        Converters converters = new Converters(new HashSet<>(convertersList));
 
-        Converters converters1 = new Converters(new HashSet<>(Arrays.asList(converters)));
+        List<OptionExtractor> extractorsList = new ArrayList<>(Arrays.asList(extractorsArray));
+        extractorsList.add(new ListOptionExtractor(() -> extractor, iterableConverter, mapConverter, converters));
+        extractorsList.add(new StringArrayOptionExtractor(iterableConverter, converters));
 
-        extractors.add(new ListOptionExtractor(iterableConverter, converters1));
-        extractors.add(new ArrayOptionExtractor(iterableConverter, converters1));
-
-        extractor = new Extractor(extractors, null);
+        extractor = new Extractor(extractorsList, null);
     }
 
     public void testExtractOption(

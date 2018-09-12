@@ -30,13 +30,13 @@ import java.util.List;
  * @since v1.0.0
  * @orchidApi optionTypes
  */
-public final class ArrayOptionExtractor extends OptionExtractor<String[]> {
+public final class StringArrayOptionExtractor extends OptionExtractor<String[]> {
 
     private final FlexibleIterableConverter converter;
     private final Converters converters;
 
     @Inject
-    public ArrayOptionExtractor(FlexibleIterableConverter converter, Converters converters) {
+    public StringArrayOptionExtractor(FlexibleIterableConverter converter, Converters converters) {
         super(2);
         this.converter = converter;
         this.converters = converters;

@@ -3,20 +3,29 @@ package com.eden.orchid.api.options.extractors;
 import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.converters.Converters;
 import com.eden.orchid.api.converters.FlexibleIterableConverter;
+import com.eden.orchid.api.converters.FlexibleMapConverter;
+import com.eden.orchid.api.options.Extractable;
+import com.eden.orchid.api.options.Extractor;
 import com.eden.orchid.api.options.OptionExtractor;
 import com.eden.orchid.api.options.annotations.BooleanDefault;
 import com.eden.orchid.api.options.annotations.DoubleDefault;
 import com.eden.orchid.api.options.annotations.FloatDefault;
+import com.eden.orchid.api.options.annotations.ImpliedKey;
 import com.eden.orchid.api.options.annotations.IntDefault;
 import com.eden.orchid.api.options.annotations.LongDefault;
 import com.eden.orchid.api.options.annotations.StringDefault;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ### Source Types
@@ -39,13 +48,17 @@ import java.util.List;
  */
 public final class ListOptionExtractor extends OptionExtractor<List> {
 
-    private final FlexibleIterableConverter converter;
+    private final Provider<Extractor> extractor;
+    private final FlexibleIterableConverter iterableConverter;
+    private final FlexibleMapConverter mapConverter;
     private final Converters converters;
 
     @Inject
-    public ListOptionExtractor(FlexibleIterableConverter converter, Converters converters) {
+    public ListOptionExtractor(Provider<Extractor> extractor, FlexibleIterableConverter iterableConverter, FlexibleMapConverter mapConverter, Converters converters) {
         super(2);
-        this.converter = converter;
+        this.extractor = extractor;
+        this.iterableConverter = iterableConverter;
+        this.mapConverter = mapConverter;
         this.converters = converters;
     }
 
@@ -56,18 +69,44 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
 
     @Override
     public List getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Iterable> value = converter.convert(field.getType(), sourceObject);
+        EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject);
+        EdenPair<Boolean, Map> valueAsMap = mapConverter.convert(field.getType(), sourceObject);
 
         List<Object> list = new ArrayList<>();
 
         ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
         Class<?> listClass = (Class<?>) stringListType.getActualTypeArguments()[0];
 
-        for(Object item : value.second) {
-            EdenPair<Boolean, ?> converted = converters.convert(item, listClass);
+        if(Extractable.class.isAssignableFrom(listClass)) {
+            String impliedKey = (field.isAnnotationPresent(ImpliedKey.class))
+                    ? field.getAnnotation(ImpliedKey.class).value()
+                    : null;
 
-            if(converted.first) {
-                list.add(converted.second);
+            if(valueAsIterable.first) {
+                for(Object item : valueAsIterable.second) {
+                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    EdenPair<Boolean, Map> config = convert(listClass, item, impliedKey);
+                    holder.extractOptions(extractor.get(), config.second);
+                    list.add(holder);
+                }
+            }
+            else if(valueAsMap.first) {
+                for(Map.Entry<String, Object> item : ((Map<String, Object>) valueAsMap.second).entrySet()) {
+                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    Map<String, Object> config = convert(item.getValue());
+                    config.put(impliedKey, item.getKey());
+                    holder.extractOptions(extractor.get(), config);
+                    list.add(holder);
+                }
+            }
+        }
+        else {
+            for(Object item : valueAsIterable.second) {
+                EdenPair<Boolean, ?> converted = converters.convert(item, listClass);
+
+                if(converted.first) {
+                    list.add(converted.second);
+                }
             }
         }
 
@@ -154,6 +193,49 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         }
 
         return "empty list";
+    }
+
+
+    private EdenPair<Boolean, Map> convert(Class clazz, Object object, String keyName) {
+        if(object != null) {
+            Map<String, Object> sourceMap = null;
+
+            if(object instanceof Map || object instanceof JSONObject) {
+                if (object instanceof Map) {
+                    sourceMap = (Map) object;
+                }
+                else if(object instanceof JSONObject) {
+                    sourceMap = (Map) ((JSONObject) object).toMap();
+                }
+                if(sourceMap.size() == 1) {
+                    String key = new ArrayList<>(sourceMap.keySet()).get(0);
+                    Map<String, Object> value = convert(sourceMap.get(key));
+
+                    value.put(keyName, key);
+                    sourceMap = value;
+                }
+            }
+            else {
+                sourceMap = Collections.singletonMap(keyName, object);
+            }
+
+            return new EdenPair<>(true, (Map) sourceMap);
+        }
+
+        return new EdenPair<>(false, (Map) new HashMap());
+    }
+
+    public Map<String, Object> convert(Object object) {
+        if(object != null) {
+            if (object instanceof Map) {
+                return (Map<String, Object>) object;
+            }
+            else if(object instanceof JSONObject) {
+                return ((JSONObject) object).toMap();
+            }
+        }
+
+        return new HashMap<>();
     }
 
 }
