@@ -72,6 +72,25 @@ public class Extractor {
         }
     }
 
+    public final Map<String, Object> getOptionsValues(Object optionsHolder) {
+        if(optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
+
+        // extract options fields
+        EdenPair<Field, Set<Field>> fields = findOptionFields(optionsHolder.getClass());
+
+        Map<String, Object> optionsValues = new HashMap<>();
+
+        for (Field field : fields.second) {
+            String fieldOptionKey = (!EdenUtils.isEmpty(field.getAnnotation(Option.class).value()))
+                    ? field.getAnnotation(Option.class).value()
+                    : field.getName();
+
+            optionsValues.put(fieldOptionKey, getOptionValue(optionsHolder, field, fieldOptionKey));
+        }
+
+        return optionsValues;
+    }
+
 // Find Options
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -226,6 +245,45 @@ public class Extractor {
         }
 
         Clog.e("Options field {} in class {} is inaccessible. Make sure the field is public or has a bean-style setter method", key, optionsHolder.getClass().getSimpleName());
+    }
+
+// Get option values
+//----------------------------------------------------------------------------------------------------------------------
+
+    protected final Object getOptionValue(Object optionsHolder, Field field, String key) {
+        try {
+            String getterMethodName = "get" + key.substring(0, 1).toUpperCase() + key.substring(1);
+            Method method = optionsHolder.getClass().getMethod(getterMethodName);
+            return method.invoke(optionsHolder);
+        }
+        catch (NoSuchMethodException e) {
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Method method = optionsHolder.getClass().getMethod("get", String.class);
+            return method.invoke(optionsHolder, key);
+        }
+        catch (NoSuchMethodException e) {
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            return field.get(optionsHolder);
+        }
+        catch (IllegalAccessException e) {
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Clog.e("Options field {} in class {} is inaccessible. Make sure the field is public or has a bean-style getter method", key, optionsHolder.getClass().getSimpleName());
+
+        return null;
     }
 
 // Description

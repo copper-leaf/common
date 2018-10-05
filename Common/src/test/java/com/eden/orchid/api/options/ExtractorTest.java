@@ -16,6 +16,7 @@ import com.eden.orchid.api.options.extractors.IntOptionExtractor;
 import com.eden.orchid.api.options.extractors.StringOptionExtractor;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -244,6 +245,31 @@ public class ExtractorTest {
                 Arguments.of(new ParentArchetypesOnlyClass(),         "val1", 3, "val1:3"),
                 Arguments.of(new ParentArchetypesOverrideClass(),     "val1", 3, "val1:3")
         );
+    }
+
+// Getting options values tests
+//----------------------------------------------------------------------------------------------------------------------
+
+    @Test
+    void testArchetypes() throws Throwable {
+        testOptionsClass.stringOption = "test stringOption";
+        testOptionsClass.setBeanSetter("test beanSetter");
+        testOptionsClass.intOption = 12;
+        testOptionsClass.parentStringOption = "test parentStringOption";
+        testOptionsClass.parentIntOption = 14;
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("stringOption", "test stringOption");
+        expectedExtractedValueMap.put("beanSetter", "setter value");
+        expectedExtractedValueMap.put("intOption", 12);
+        expectedExtractedValueMap.put("parentStringOption", "test parentStringOption");
+        expectedExtractedValueMap.put("parentIntOption", 14);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(testOptionsClass);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
     }
 
 }
