@@ -262,6 +262,43 @@ public class Extractor {
             e.printStackTrace();
         }
 
+        // boolean getters have special naming conventions
+        if(field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
+            try {
+                String getterMethodName = "is" + key.substring(0, 1).toUpperCase() + key.substring(1);
+                Method method = optionsHolder.getClass().getMethod(getterMethodName);
+                return method.invoke(optionsHolder);
+            }
+            catch (NoSuchMethodException e) {
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                String getterMethodName = "has" + key.substring(0, 1).toUpperCase() + key.substring(1);
+                Method method = optionsHolder.getClass().getMethod(getterMethodName);
+                return method.invoke(optionsHolder);
+            }
+            catch (NoSuchMethodException e) {
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // also allow for fluent getters
+        try {
+            String getterMethodName = key;
+            Method method = optionsHolder.getClass().getMethod(getterMethodName);
+            return method.invoke(optionsHolder);
+        }
+        catch (NoSuchMethodException e) {
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             Method method = optionsHolder.getClass().getMethod("get", String.class);
             return method.invoke(optionsHolder, key);

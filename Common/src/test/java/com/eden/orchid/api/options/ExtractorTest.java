@@ -2,16 +2,22 @@ package com.eden.orchid.api.options;
 
 import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenUtils;
+import com.eden.orchid.api.converters.BooleanConverter;
 import com.eden.orchid.api.converters.ClogStringConverterHelper;
+import com.eden.orchid.api.converters.DoubleConverter;
 import com.eden.orchid.api.converters.IntegerConverter;
+import com.eden.orchid.api.converters.LongConverter;
+import com.eden.orchid.api.converters.NumberConverter;
 import com.eden.orchid.api.converters.StringConverter;
 import com.eden.orchid.api.converters.StringConverterHelper;
 import com.eden.orchid.api.options.annotations.AllOptions;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
+import com.eden.orchid.api.options.annotations.BooleanDefault;
 import com.eden.orchid.api.options.annotations.IntDefault;
 import com.eden.orchid.api.options.annotations.Option;
 import com.eden.orchid.api.options.annotations.StringDefault;
+import com.eden.orchid.api.options.extractors.BooleanOptionExtractor;
 import com.eden.orchid.api.options.extractors.IntOptionExtractor;
 import com.eden.orchid.api.options.extractors.StringOptionExtractor;
 import org.json.JSONObject;
@@ -84,11 +90,15 @@ public class ExtractorTest {
         Set<StringConverterHelper> helpers = new HashSet<>();
         helpers.add(new ClogStringConverterHelper());
         StringConverter stringConverter = new StringConverter(helpers);
+        DoubleConverter doubleConverter = new DoubleConverter(stringConverter);
+        LongConverter longConverter = new LongConverter(stringConverter);
+        NumberConverter numberConverter = new NumberConverter(longConverter, doubleConverter);
 
         Set<OptionExtractor> extractors = new HashSet<>();
 
         extractors.add(new StringOptionExtractor(stringConverter));
         extractors.add(new IntOptionExtractor(new IntegerConverter(stringConverter)));
+        extractors.add(new BooleanOptionExtractor(new BooleanConverter(stringConverter, numberConverter)));
 
         extractor = new Extractor(extractors, null);
     }
@@ -251,7 +261,7 @@ public class ExtractorTest {
 //----------------------------------------------------------------------------------------------------------------------
 
     @Test
-    void testArchetypes() throws Throwable {
+    void testGettingValues() throws Throwable {
         testOptionsClass.stringOption = "test stringOption";
         testOptionsClass.setBeanSetter("test beanSetter");
         testOptionsClass.intOption = 12;
@@ -268,6 +278,156 @@ public class ExtractorTest {
 
         Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(testOptionsClass);
         JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
+    }
+
+    public static class TestGetPublicProperty {
+
+        @Option @StringDefault("val1") public String key1;
+        @Option @BooleanDefault(true)  public boolean key2;
+
+    }
+
+    @Test
+    void testGetPublicProperty() throws Throwable {
+        TestGetPublicProperty underTest = new TestGetPublicProperty();
+        extractor.extractOptions(underTest, new HashMap<>());
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("key1", "val1");
+        expectedExtractedValueMap.put("key2", true);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(underTest);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        System.out.println("expected=" + expectedExtractedValue.toString(2));
+        System.out.println("actual=" + actualExtractedValue.toString(2));
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
+    }
+
+    public static class TestDefaultGetMethodsHas {
+
+        @Option private String key1;
+        @Option private boolean key2;
+
+        public String getKey1() { return "val1"; }
+        public void setKey1(String key1) { this.key1 = key1; }
+
+        public boolean hasKey2() { return true; }
+        public void setKey2(boolean key2) { this.key2 = key2; }
+    }
+
+    @Test
+    void testDefaultGetMethodsHas() throws Throwable {
+        TestDefaultGetMethodsHas underTest = new TestDefaultGetMethodsHas();
+        extractor.extractOptions(underTest, new HashMap<>());
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("key1", "val1");
+        expectedExtractedValueMap.put("key2", true);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(underTest);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        System.out.println("expected=" + expectedExtractedValue.toString(2));
+        System.out.println("actual=" + actualExtractedValue.toString(2));
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
+    }
+
+    public static class TestDefaultGetMethodsIs {
+
+        @Option private String key1;
+        @Option private boolean key2;
+
+        public String getKey1() { return "val1"; }
+        public void setKey1(String key1) { this.key1 = key1; }
+
+        public boolean isKey2() { return true; }
+        public void setKey2(boolean key2) { this.key2 = key2; }
+    }
+
+    @Test
+    void testDefaultGetMethodsIs() throws Throwable {
+        TestDefaultGetMethodsIs underTest = new TestDefaultGetMethodsIs();
+        extractor.extractOptions(underTest, new HashMap<>());
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("key1", "val1");
+        expectedExtractedValueMap.put("key2", true);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(underTest);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        System.out.println("expected=" + expectedExtractedValue.toString(2));
+        System.out.println("actual=" + actualExtractedValue.toString(2));
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
+    }
+
+    public static class TestDefaultGetMethodsGet {
+
+        @Option private String key1;
+        @Option private boolean key2;
+
+        public String getKey1() { return "val1"; }
+        public void setKey1(String key1) { this.key1 = key1; }
+
+        public boolean getKey2() { return true; }
+        public void setKey2(boolean key2) { this.key2 = key2; }
+    }
+
+    @Test
+    void testDefaultGetMethodsGet() throws Throwable {
+        TestDefaultGetMethodsGet underTest = new TestDefaultGetMethodsGet();
+        extractor.extractOptions(underTest, new HashMap<>());
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("key1", "val1");
+        expectedExtractedValueMap.put("key2", true);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(underTest);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        System.out.println("expected=" + expectedExtractedValue.toString(2));
+        System.out.println("actual=" + actualExtractedValue.toString(2));
+
+        assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
+    }
+
+    public static class TestFluentGetMethods {
+
+        @Option private String key1;
+        @Option private boolean key2;
+
+        public String key1() { return "val1"; }
+        public void key1(String key1) { this.key1 = key1; }
+
+        public boolean key2() { return true; }
+        public void key2(boolean key2) { this.key2 = key2; }
+    }
+
+    @Test
+    void testFluentGetMethods() throws Throwable {
+        TestFluentGetMethods underTest = new TestFluentGetMethods();
+        extractor.extractOptions(underTest, new HashMap<>());
+
+        Map<String, Object> expectedExtractedValueMap = new HashMap<>();
+        expectedExtractedValueMap.put("key1", "val1");
+        expectedExtractedValueMap.put("key2", true);
+        JSONObject expectedExtractedValue = new JSONObject(expectedExtractedValueMap);
+
+        Map<String, Object> actualExtractedValueMap = extractor.getOptionsValues(underTest);
+        JSONObject actualExtractedValue = new JSONObject(actualExtractedValueMap);
+
+        System.out.println("expected=" + expectedExtractedValue.toString(2));
+        System.out.println("actual=" + actualExtractedValue.toString(2));
 
         assertThat(expectedExtractedValue.similar(actualExtractedValue), is(equalTo(true)));
     }
