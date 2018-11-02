@@ -8,7 +8,9 @@ import com.eden.orchid.api.converters.TypeConverter;
 import com.eden.orchid.api.options.Extractable;
 import com.eden.orchid.api.options.Extractor;
 import com.eden.orchid.api.options.OptionExtractor;
+import com.eden.orchid.api.options.annotations.ImpliedKey;
 import com.eden.orchid.api.options.annotations.Option;
+import com.eden.orchid.api.options.annotations.StringDefault;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +71,8 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
         public int hashCode() {
             return Objects.hash(innerStringValue, innerIntValue);
         }
+
+
     }
 
     public static class TestArrayClass {
@@ -78,6 +82,8 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
 
     public static class TestListClass {
         @Option
+        @ImpliedKey("innerStringValue")
+        @StringDefault({"one", "two"})
         public List<TestExtractableClass> testValues;
     }
 
@@ -162,37 +168,41 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
             final int[] expectedExtractedIntValues
     ) throws Throwable {
         final TestListClass underTest = new TestListClass();
-        int argLength = sourceStringValues.length;
 
-        assertThat(sourceStringValues.length, is(equalTo(argLength)));
-        assertThat(sourceIntValues.length, is(equalTo(argLength)));
-        assertThat(expectedExtractedStringValues.length, is(equalTo(argLength)));
-        assertThat(expectedExtractedIntValues.length, is(equalTo(argLength)));
-
-        final JSONArray arrayValues = new JSONArray();
-        for (int i = 0; i < sourceStringValues.length; i++) {
-            final JSONObject innerOptions = new JSONObject();
-            if (sourceStringValues[i] != null) {
-                if (sourceStringValues[i].toString().equals("_nullValue")) {
-                    innerOptions.put("innerStringValue", (String) null);
-                }
-                else {
-                    innerOptions.put("innerStringValue", sourceStringValues[i]);
-                }
-            }
-            innerOptions.put("innerIntValue", sourceIntValues[i]);
-            arrayValues.put(innerOptions);
-        }
-
+        int resultArgLength = expectedExtractedStringValues.length;
         final JSONObject options = new JSONObject();
-        options.put("testValues", arrayValues);
+
+        if(sourceStringValues != null && sourceIntValues != null) {
+            int sourceArgLength = sourceStringValues.length;
+
+            assertThat(sourceStringValues.length, is(equalTo(sourceArgLength)));
+            assertThat(sourceIntValues.length, is(equalTo(sourceArgLength)));
+            assertThat(expectedExtractedStringValues.length, is(equalTo(resultArgLength)));
+            assertThat(expectedExtractedIntValues.length, is(equalTo(resultArgLength)));
+
+            final JSONArray arrayValues = new JSONArray();
+            for (int i = 0; i < sourceStringValues.length; i++) {
+                final JSONObject innerOptions = new JSONObject();
+                if (sourceStringValues[i] != null) {
+                    if (sourceStringValues[i].toString().equals("_nullValue")) {
+                        innerOptions.put("innerStringValue", (String) null);
+                    }
+                    else {
+                        innerOptions.put("innerStringValue", sourceStringValues[i]);
+                    }
+                }
+                innerOptions.put("innerIntValue", sourceIntValues[i]);
+                arrayValues.put(innerOptions);
+            }
+            options.put("testValues", arrayValues);
+        }
 
         assertThat(underTest.testValues, is(nullValue()));
 
         extractor.extractOptions(underTest, options.toMap());
 
         assertThat(underTest.testValues, is(notNullValue()));
-        assertThat(underTest.testValues.size(), is(equalTo(argLength)));
+        assertThat(underTest.testValues.size(), is(equalTo(resultArgLength)));
 
         for (int i = 0; i < underTest.testValues.size(); i++) {
             assertThat(underTest.testValues.get(i).innerStringValue, is(equalTo(expectedExtractedStringValues[i])));
@@ -207,6 +217,12 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
                         new Object[] {1, 2},
                         new String[] {"asdf1", "asdf2"},
                         new int[] {1, 2}
+                ),
+                Arguments.of(
+                        null,
+                        null,
+                        new String[] {"one", "two"},
+                        new int[] {0, 0}
                 )
         );
     }

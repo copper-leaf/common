@@ -168,6 +168,22 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
                 return Arrays.asList(field.getAnnotation(StringDefault.class).value());
             }
         }
+        else if(Extractable.class.isAssignableFrom(listClass)) {
+            if(field.isAnnotationPresent(ImpliedKey.class) && field.isAnnotationPresent(StringDefault.class)) {
+                String impliedKey = field.getAnnotation(ImpliedKey.class).value();
+                String[] defaultItems = field.getAnnotation(StringDefault.class).value();
+
+                ArrayList list = new ArrayList();
+                for(String defaultItem : defaultItems) {
+                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    EdenPair<Boolean, Map> config = convert(listClass, defaultItem, impliedKey);
+                    holder.extractOptions(extractor.get(), config.second);
+                    list.add(holder);
+                }
+
+                return list;
+            }
+        }
 
         return new ArrayList();
     }
