@@ -139,8 +139,7 @@ public class Extractor {
 // Options Archetypes
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected List<Archetype> getArchetypes(Object target) {
-        Class<?> optionsHolderClass = target.getClass();
+    protected List<Archetype> getArchetypes(Class<?> optionsHolderClass) {
         List<Archetype> archetypeAnnotations = new ArrayList<>();
 
         while (optionsHolderClass != null) {
@@ -166,7 +165,7 @@ public class Extractor {
     protected final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
         Map<String, Object> allAdditionalData = new HashMap<>();
 
-        for(Archetype archetype : getArchetypes(target)) {
+        for(Archetype archetype : getArchetypes(target.getClass())) {
             OptionArchetype archetypeDataProvider = getInstance(archetype.value());
 
             Map<String, Object> archetypeConfiguration;
