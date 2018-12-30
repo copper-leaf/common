@@ -4,42 +4,41 @@ import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenUtils;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Getter
 public final class FlagsParser {
 
-    @Singular
     private final Set<String> validNames;
-
-    @Singular
     private final Map<String, String> validAliases;
-
     private final List<String> positionalNames;
 
     @Builder
     public FlagsParser(
-            Set<String> validNames,
-            Map<String, String> validAliases,
+            @Singular Set<String> validNames,
+            @Singular Map<String, String> validAliases,
             List<String> positionalNames) {
-        this.validNames = validNames;
-        this.validAliases = validAliases;
-        this.positionalNames = positionalNames;
+        this.validNames = (!EdenUtils.isEmpty(validNames)) ? validNames : new HashSet<String>();
+        this.validAliases = (!EdenUtils.isEmpty(validAliases)) ? validAliases : new HashMap<String, String>();
+        this.positionalNames = (!EdenUtils.isEmpty(positionalNames)) ? positionalNames : new ArrayList<String>();
 
-        for(Map.Entry<String, String> alias : validAliases.entrySet()) {
+        for(Map.Entry<String, String> alias : this.validAliases.entrySet()) {
             if(!validNames.contains(alias.getValue())) {
                 throw new IllegalArgumentException("Alias references a flag that is not a valid name: " + alias.getKey() + "->" + alias.getValue());
             }
         }
 
-        for(String positionalArg : positionalNames) {
+        for(String positionalArg : this.positionalNames) {
             if(!validNames.contains(positionalArg)) {
                 throw new IllegalArgumentException("Positional arg references a flag that is not a valid name: " + positionalArg);
             }
@@ -55,7 +54,7 @@ public final class FlagsParser {
      * @param argString a String to parse as CLI flags
      * @return the result of parsing
      */
-    public ParseResult parseArgsArray(String argString) {
+    public ParseResult parseArgs(String argString) {
         List<String> argsList = new ArrayList<>();
 
         Clog.v("Parsing string:");
@@ -115,7 +114,7 @@ public final class FlagsParser {
         String[] argsArray = new String[argsList.size()];
         argsList.toArray(argsArray);
 
-        ParseResult result = parseArgsArray(argsArray);
+        ParseResult result = parseArgs(argsArray);
         result.setOriginalString(argString);
         return result;
     }
@@ -127,7 +126,7 @@ public final class FlagsParser {
      * @param args the CLI flags to parse
      * @return the result of parsing
      */
-    public ParseResult parseArgsArray(String[] args) {
+    public ParseResult parseArgs(String[] args) {
         Clog.v("Parsing with:");
         Clog.v("  valid names: {}", validNames);
         Clog.v("  valid aliases: {}", validAliases);
@@ -244,7 +243,7 @@ public final class FlagsParser {
         normalizeFlags(parsedValidFlags);
         normalizeFlags(parsedInvalidFlags);
 
-        return new ParseResult(parsedValidFlags, parsedInvalidFlags, args);
+        return new ParseResult(this, parsedValidFlags, parsedInvalidFlags, args);
     }
 
     private void addArgValue(
@@ -313,6 +312,7 @@ public final class FlagsParser {
 
     @Data
     public static class ParseResult {
+        private final FlagsParser parser;
         private final Map<String, Object> validFlags;
         private final Map<String, Object> invalidFlags;
         private final String[] originalArgs;

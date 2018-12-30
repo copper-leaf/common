@@ -33,6 +33,10 @@ wiki:
     - json
     - options
 
+javadoc:
+  sourceDirs:
+    - '../../../../Common/src/main/java'
+
 services:
   publications:
     stages:

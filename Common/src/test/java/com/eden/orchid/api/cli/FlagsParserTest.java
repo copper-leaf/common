@@ -51,7 +51,7 @@ public class FlagsParserTest {
             Map<String, String[]> expectedValidFlags,
             Map<String, String[]> expectedInvalidFlags) {
 
-        FlagsParser.ParseResult output = underTest.parseArgsArray(input);
+        FlagsParser.ParseResult output = underTest.parseArgs(input);
 
         // check whether parsing was successful
         assertThat(output.success(), is(equalTo(success)));
@@ -283,7 +283,7 @@ public class FlagsParserTest {
             boolean success,
             Map<String, String[]> expectedValidFlags,
             Map<String, String[]> expectedInvalidFlags) {
-        FlagsParser.ParseResult output = underTest.parseArgsArray(input);
+        FlagsParser.ParseResult output = underTest.parseArgs(input);
 
         // check whether parsing was successful
         assertThat(output.success(), is(equalTo(success)));
@@ -618,7 +618,7 @@ public class FlagsParserTest {
                 .build();
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            parser.parseArgsArray(new String[]{"-t"});
+            parser.parseArgs(new String[]{"-t"});
         });
     }
 
