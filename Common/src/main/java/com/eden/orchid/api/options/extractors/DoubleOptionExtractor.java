@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
  * | Double     | @DoubleDefault | Annotation value() or 0.0 |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class DoubleOptionExtractor extends OptionExtractor<Double> {
 

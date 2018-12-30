@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
  * | JSONArray  | none        | null          |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class JSONArrayOptionExtractor extends OptionExtractor<JSONArray> {
 

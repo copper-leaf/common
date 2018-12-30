@@ -11,7 +11,6 @@ import javax.inject.Inject;
  * | string | parsed number as float | toString  |
  *
  * @since v1.0.0
- * @orchidApi converters
  */
 public final class FloatConverter implements TypeConverter<Float> {
 

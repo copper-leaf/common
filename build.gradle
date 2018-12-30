@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 buildscript {
-    ext.orchid_version = '0.8.1'
+    ext.orchid_version = '0.15.1'
     repositories {
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
@@ -11,10 +11,7 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.com.eden:orchidPlugin:${orchid_version}"
-        classpath "gradle.plugin.com.eden:orchidJavadocPlugin:${orchid_version}"
-        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 }
 
@@ -63,10 +60,6 @@ task getReleaseNotes {
     }
 }
 
-
-task prepareDocumentation {
-}
 task deploy {
-    dependsOn prepareDocumentation
     doLast { }
 }

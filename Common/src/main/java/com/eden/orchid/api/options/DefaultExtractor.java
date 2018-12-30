@@ -19,7 +19,6 @@ import com.eden.orchid.api.converters.StringConverterHelper;
 import com.eden.orchid.api.converters.TimeConverter;
 import com.eden.orchid.api.converters.TypeConverter;
 import com.eden.orchid.api.options.extractors.AnyOptionExtractor;
-import com.eden.orchid.api.options.extractors.StringArrayOptionExtractor;
 import com.eden.orchid.api.options.extractors.BooleanOptionExtractor;
 import com.eden.orchid.api.options.extractors.DateOptionExtractor;
 import com.eden.orchid.api.options.extractors.DateTimeOptionExtractor;
@@ -32,46 +31,54 @@ import com.eden.orchid.api.options.extractors.JSONArrayOptionExtractor;
 import com.eden.orchid.api.options.extractors.JSONObjectOptionExtractor;
 import com.eden.orchid.api.options.extractors.ListOptionExtractor;
 import com.eden.orchid.api.options.extractors.LongOptionExtractor;
+import com.eden.orchid.api.options.extractors.StringArrayOptionExtractor;
 import com.eden.orchid.api.options.extractors.StringOptionExtractor;
 import com.eden.orchid.api.options.extractors.TimeOptionExtractor;
 
 import javax.inject.Provider;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public final class DefaultExtractor extends Extractor {
+public final class DefaultExtractor {
 
-    private static DefaultExtractor instance;
-
-    public static DefaultExtractor getInstance() {
-        return getInstance(null, null, null);
+    private DefaultExtractor() {
     }
 
-    public static DefaultExtractor getInstance(OptionsValidator validator, Collection<TypeConverter<?>> extraConverters, Collection<OptionExtractor<?>> extraExtractors) {
-        if(instance == null) {
-            instance = new DefaultExtractor(validator, extraConverters, extraExtractors);
+    private static Extractor instance;
+
+    public static void initialize(Extractor instance) {
+        if (DefaultExtractor.instance != null) {
+            throw new IllegalStateException("DefaultExtractor is already setup!");
+        }
+
+        DefaultExtractor.instance = instance;
+    }
+
+    public static Extractor getInstance() {
+        if (instance == null) {
+            instance = Extractor.builder()
+                    .instanceCreator(new DefaultInstanceCreator())
+                    .extractors(
+                            getExtractors(
+                                    new Provider<Extractor>() {
+                                        @Override
+                                        public Extractor get() {
+                                            return instance;
+                                        }
+                                    },
+                                    null,
+                                    null
+                            )
+                    )
+                    .build();
         }
         return instance;
     }
 
-    private DefaultExtractor(OptionsValidator validator, Collection<TypeConverter<?>> extraConverters, Collection<OptionExtractor<?>> extraExtractors) {
-        super(
-                getExtractors(
-                        new Provider<Extractor>() {
-                            @Override
-                            public Extractor get() {
-                                return instance;
-                            }
-                        },
-                        extraConverters,
-                        extraExtractors
-                ),
-                validator
-        );
-    }
-
-    private static Collection<OptionExtractor> getExtractors(
+    private static List<OptionExtractor> getExtractors(
             Provider<Extractor> extractorProvider,
             Collection<TypeConverter<?>> extraConverters,
             Collection<OptionExtractor<?>> extraExtractors
@@ -117,7 +124,7 @@ public final class DefaultExtractor extends Extractor {
         Converters converters = new Converters(typeConverters);
 
         // OptionExtractor
-        Set<OptionExtractor> extractors = new HashSet<>();
+        List<OptionExtractor> extractors = new ArrayList<>();
         extractors.add(new AnyOptionExtractor());
         extractors.add(new StringArrayOptionExtractor(flexibleIterableConverter, converters));
         extractors.add(new BooleanOptionExtractor(booleanConverter));

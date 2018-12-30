@@ -32,3 +32,13 @@ wiki:
   sections:
     - json
     - options
+
+services:
+  publications:
+    stages:
+      - type: ghPages
+        repo: 'JavaEden/Orchid'
+        username: 'cjbrooks12'
+        publishType: VersionedBranchWithLatest
+      - type: githubReleases
+        repo: 'JavaEden/Orchid'

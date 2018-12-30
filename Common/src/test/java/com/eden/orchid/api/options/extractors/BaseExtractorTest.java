@@ -33,11 +33,11 @@ public abstract class BaseExtractorTest {
         convertersList.add(iterableConverter);
         Converters converters = new Converters(new HashSet<>(convertersList));
 
-        List<OptionExtractor> extractorsList = new ArrayList<>(Arrays.asList(extractorsArray));
-        extractorsList.add(new ListOptionExtractor(() -> extractor, iterableConverter, mapConverter, converters));
-        extractorsList.add(new StringArrayOptionExtractor(iterableConverter, converters));
+        List<OptionExtractor> extractors = new ArrayList<>(Arrays.asList(extractorsArray));
+        extractors.add(new ListOptionExtractor(() -> extractor, iterableConverter, mapConverter, converters));
+        extractors.add(new StringArrayOptionExtractor(iterableConverter, converters));
 
-        extractor = new Extractor(extractorsList, null);
+        extractor = Extractor.builder().extractors(extractors).build();
     }
 
     public void testExtractOption(

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
  * | String[]     | none           | Empty String[]             |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class DateTimeOptionExtractor extends OptionExtractor<LocalDateTime> {
 

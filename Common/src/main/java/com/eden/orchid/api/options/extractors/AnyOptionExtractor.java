@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 
 /**
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class AnyOptionExtractor extends OptionExtractor<Object> {
 

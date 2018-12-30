@@ -44,6 +44,15 @@ public class EdenUtils {
         }
     }
 
+    public static boolean isEmpty(Map<?, ?> map) {
+        if (map == null || map.size() == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public static boolean isEmpty(Object[] array) {
         if (array == null || array.length == 0) {
             return true;

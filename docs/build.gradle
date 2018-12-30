@@ -1,0 +1,43 @@
+apply plugin: "com.eden.orchidPlugin"
+
+group rootProject.group
+version rootProject.version
+
+repositories {
+    jcenter()
+    maven { url 'https://kotlin.bintray.com/kotlinx' }
+    maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+    maven { url 'https://dl.bintray.com/javaeden/Eden/' }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    orchidRuntime "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidSearch:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidSyntaxHighlighter:${orchid_version}"
+}
+
+// Javadoc and Orchid
+//----------------------------------------------------------------------------------------------------------------------
+
+orchid {
+    version = "${project.version}"
+    theme = "BsDoc"
+    baseUrl = "https://javaeden.github.io/Common"
+
+    if(project.hasProperty('env') && project.property('env') == 'prod') {
+        environment = 'prod'
+    }
+}
+
+tasks.javadoc.onlyIf { false }
+tasks.build.dependsOn project.tasks.orchidBuild
+task deploy {
+    dependsOn project.tasks.orchidDeploy
+    doLast { }
+}

@@ -1,6 +1,5 @@
 package com.eden.orchid.api.converters;
 
-import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.options.Extractable;
 import com.eden.orchid.api.options.Extractor;
@@ -28,7 +27,7 @@ public class ExtractableConverter implements TypeConverter<Extractable> {
     @Override
     public EdenPair<Boolean, Extractable> convert(Class clazz, Object o) {
         try {
-            Extractable holder = (Extractable) extractor.get().getInstance(clazz);
+            Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(clazz);
             EdenPair<Boolean, Map> config = mapConverter.convert(clazz, o);
             holder.extractOptions(extractor.get(), config.second);
             return new EdenPair<>(true, holder);

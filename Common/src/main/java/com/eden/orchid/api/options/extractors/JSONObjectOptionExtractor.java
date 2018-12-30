@@ -23,7 +23,6 @@ import java.lang.reflect.Field;
  * | JSONObject | none        | null          |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class JSONObjectOptionExtractor extends OptionExtractor<JSONObject> {
 

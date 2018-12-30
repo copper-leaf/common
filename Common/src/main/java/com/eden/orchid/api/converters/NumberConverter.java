@@ -11,7 +11,6 @@ import javax.inject.Inject;
  * | integer number | that number as long   | LongConverter   |
  *
  * @since v1.0.0
- * @orchidApi converters
  */
 public final class NumberConverter implements TypeConverter<Number> {
 

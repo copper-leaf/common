@@ -13,7 +13,6 @@ import java.time.LocalTime;
  * | string | parsed number as float | toString  |
  *
  * @since v1.0.0
- * @orchidApi converters
  */
 public final class TimeConverter implements TypeConverter<LocalTime> {
 

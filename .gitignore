@@ -13,7 +13,6 @@ out/
 .gradle/
 build/
 /classes/
-docs/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -35,5 +34,3 @@ Orchid.ipr
 
 # Google Analytics
 /**/templates/meta.*
-
-OrchidCore/src/orchid/resources/generate_posts\.py

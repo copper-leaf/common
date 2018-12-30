@@ -44,7 +44,6 @@ import java.util.Map;
  * | JSONArray  | none        | null          |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class ListOptionExtractor extends OptionExtractor<List> {
 
@@ -84,7 +83,7 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
 
             if(valueAsIterable.first) {
                 for(Object item : valueAsIterable.second) {
-                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
                     EdenPair<Boolean, Map> config = convert(listClass, item, impliedKey);
                     holder.extractOptions(extractor.get(), config.second);
                     list.add(holder);
@@ -92,7 +91,7 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
             }
             else if(valueAsMap.first) {
                 for(Map.Entry<String, Object> item : ((Map<String, Object>) valueAsMap.second).entrySet()) {
-                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
                     Map<String, Object> config = convert(item.getValue());
                     config.put(impliedKey, item.getKey());
                     holder.extractOptions(extractor.get(), config);
@@ -175,7 +174,7 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
 
                 ArrayList list = new ArrayList();
                 for(String defaultItem : defaultItems) {
-                    Extractable holder = (Extractable) extractor.get().getInstance(listClass);
+                    Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
                     EdenPair<Boolean, Map> config = convert(listClass, defaultItem, impliedKey);
                     holder.extractOptions(extractor.get(), config.second);
                     list.add(holder);

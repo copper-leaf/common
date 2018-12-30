@@ -26,7 +26,7 @@ import java.util.HashMap;
  * | Field Type                    | Annotation   | Default Value            |
  * |-------------------------------|--------------|--------------------------|
  * | ? extends OptionsHolder       | none         | null                     |
- * | List<? extends Extractable>   | none         | null                     |
+ * | List[? extends Extractable]   | none         | null                     |
  *
  * ### _Notes_
  *
@@ -34,7 +34,6 @@ import java.util.HashMap;
  * List of OptionsHolders of the same Class.
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class ExtractableOptionExtractor extends OptionExtractor<Extractable> {
 

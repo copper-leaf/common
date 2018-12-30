@@ -25,7 +25,6 @@ import java.lang.reflect.Field;
  * | Float      | @FloatDefault | Annotation value() or 0.0f |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class FloatOptionExtractor extends OptionExtractor<Float> {
 

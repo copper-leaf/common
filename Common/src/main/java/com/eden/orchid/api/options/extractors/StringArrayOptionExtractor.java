@@ -28,7 +28,6 @@ import java.util.List;
  * | JSONArray  | none        | null          |
  *
  * @since v1.0.0
- * @orchidApi optionTypes
  */
 public final class StringArrayOptionExtractor extends OptionExtractor<String[]> {
 

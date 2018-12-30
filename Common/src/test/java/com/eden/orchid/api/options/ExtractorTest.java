@@ -27,8 +27,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -94,13 +96,13 @@ public class ExtractorTest {
         LongConverter longConverter = new LongConverter(stringConverter);
         NumberConverter numberConverter = new NumberConverter(longConverter, doubleConverter);
 
-        Set<OptionExtractor> extractors = new HashSet<>();
+        List<OptionExtractor> extractors = new ArrayList<>();
 
         extractors.add(new StringOptionExtractor(stringConverter));
         extractors.add(new IntOptionExtractor(new IntegerConverter(stringConverter)));
         extractors.add(new BooleanOptionExtractor(new BooleanConverter(stringConverter, numberConverter)));
 
-        extractor = new Extractor(extractors, null);
+        extractor = Extractor.builder().extractors(extractors).build();
     }
 
     @ParameterizedTest

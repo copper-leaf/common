@@ -7,11 +7,13 @@ import com.eden.orchid.api.options.annotations.AllOptions;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.Option;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,10 +24,21 @@ import java.util.Set;
 
 public class Extractor {
 
-    protected final List<OptionExtractor> extractors;
+    @Getter
+    private final List<OptionExtractor> extractors;
+
+    @Getter
     private final OptionsValidator validator;
 
-    public Extractor(Collection<OptionExtractor> extractors, OptionsValidator validator) {
+    @Getter
+    private final InstanceCreator instanceCreator;
+
+    @Builder
+    public Extractor(
+            @Singular List<OptionExtractor> extractors,
+            OptionsValidator validator,
+            InstanceCreator instanceCreator
+    ) {
         List<OptionExtractor> originalExtractors = new ArrayList<>(extractors);
         Collections.sort(originalExtractors, new Comparator<OptionExtractor>() {
             @Override
@@ -35,10 +48,11 @@ public class Extractor {
         });
         this.extractors = Collections.unmodifiableList(originalExtractors);
         this.validator = validator;
+        this.instanceCreator = (instanceCreator != null) ? instanceCreator : new DefaultInstanceCreator();
     }
 
     public final void extractOptions(Object optionsHolder, Map<String, Object> options) {
-        if(optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
+        if (optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
 
         // setup initial options
         Map<String, Object> initialOptions = (options != null) ? new HashMap<>(options) : new HashMap<String, Object>();
@@ -49,7 +63,7 @@ public class Extractor {
         // extract options fields
         EdenPair<Field, Set<Field>> fields = findOptionFields(optionsHolder.getClass());
 
-        if(fields.first != null) {
+        if (fields.first != null) {
             setOptionValue(optionsHolder, fields.first, fields.first.getName(), Map.class, actualOptions);
         }
 
@@ -61,7 +75,7 @@ public class Extractor {
             setOption(optionsHolder, field, actualOptions, fieldOptionKey);
         }
 
-        if(validator != null) {
+        if (validator != null) {
             try {
                 validator.validate(optionsHolder);
             }
@@ -73,7 +87,7 @@ public class Extractor {
     }
 
     public final Map<String, Object> getOptionsValues(Object optionsHolder) {
-        if(optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
+        if (optionsHolder == null) throw new NullPointerException("optionsHolder cannot be null");
 
         // extract options fields
         EdenPair<Field, Set<Field>> fields = findOptionFields(optionsHolder.getClass());
@@ -94,35 +108,36 @@ public class Extractor {
 // Find Options
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final EdenPair<Field, Set<Field>> findOptionFields(Class<?> optionsHolderClass) {
+    public final EdenPair<Field, Set<Field>> findOptionFields(Class<?> optionsHolderClass) {
         return findOptionFields(optionsHolderClass, true, true);
     }
 
-    protected final EdenPair<Field, Set<Field>> findOptionFields(Class<?> optionsHolderClass, boolean includeOwnOptions, boolean includeInheritedOptions) {
+    public final EdenPair<Field, Set<Field>> findOptionFields(Class<?> optionsHolderClass, boolean includeOwnOptions, boolean includeInheritedOptions) {
         Field optionsDataField = null;
         Set<Field> fields = new HashSet<>();
 
         int i = 0;
         while (optionsHolderClass != null) {
             boolean shouldGetOptions = true;
-            if(i == 0) {
-                if(!includeOwnOptions) {
+            if (i == 0) {
+                if (!includeOwnOptions) {
                     shouldGetOptions = false;
                 }
             }
             else {
-                if(!includeInheritedOptions) {
+                if (!includeInheritedOptions) {
                     shouldGetOptions = false;
                 }
             }
 
-            if(shouldGetOptions) {
+            if (shouldGetOptions) {
                 Field[] declaredFields = optionsHolderClass.getDeclaredFields();
                 if (!EdenUtils.isEmpty(declaredFields)) {
                     for (Field field : declaredFields) {
                         if (field.isAnnotationPresent(Option.class)) {
                             fields.add(field);
-                        } else if (field.isAnnotationPresent(AllOptions.class) && field.getType().equals(Map.class)) {
+                        }
+                        else if (field.isAnnotationPresent(AllOptions.class) && field.getType().equals(Map.class)) {
                             optionsDataField = field;
                         }
                     }
@@ -139,17 +154,17 @@ public class Extractor {
 // Options Archetypes
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected List<Archetype> getArchetypes(Class<?> optionsHolderClass) {
+    public List<Archetype> getArchetypes(Class<?> optionsHolderClass) {
         List<Archetype> archetypeAnnotations = new ArrayList<>();
 
         while (optionsHolderClass != null) {
             Archetypes archetypes = optionsHolderClass.getAnnotation(Archetypes.class);
-            if(archetypes != null) {
+            if (archetypes != null) {
                 Collections.addAll(archetypeAnnotations, archetypes.value());
             }
             else {
                 Archetype archetype = optionsHolderClass.getAnnotation(Archetype.class);
-                if(archetype != null) {
+                if (archetype != null) {
                     archetypeAnnotations.add(archetype);
                 }
             }
@@ -162,14 +177,14 @@ public class Extractor {
         return archetypeAnnotations;
     }
 
-    protected final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
+    public final Map<String, Object> loadArchetypalData(Object target, Map<String, Object> actualOptions) {
         Map<String, Object> allAdditionalData = new HashMap<>();
 
-        for(Archetype archetype : getArchetypes(target.getClass())) {
-            OptionArchetype archetypeDataProvider = getInstance(archetype.value());
+        for (Archetype archetype : getArchetypes(target.getClass())) {
+            OptionArchetype archetypeDataProvider = instanceCreator.getInstance(archetype.value());
 
             Map<String, Object> archetypeConfiguration;
-            if(actualOptions.containsKey(archetype.key()) && actualOptions.get(archetype.key()) instanceof Map) {
+            if (actualOptions.containsKey(archetype.key()) && actualOptions.get(archetype.key()) instanceof Map) {
                 archetypeConfiguration = (Map<String, Object>) actualOptions.get(archetype.key());
             }
             else {
@@ -179,7 +194,7 @@ public class Extractor {
             this.extractOptions(archetypeDataProvider, archetypeConfiguration);
             Map<String, Object> archetypalData = archetypeDataProvider.getOptions(target, archetype.key());
 
-            if(archetypalData != null) {
+            if (archetypalData != null) {
                 allAdditionalData = EdenUtils.merge(allAdditionalData, archetypalData);
             }
         }
@@ -190,7 +205,7 @@ public class Extractor {
 // Set option values
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final void setOption(Object optionsHolder, Field field, Map<String, Object> options, String key) {
+    public final void setOption(Object optionsHolder, Field field, Map<String, Object> options, String key) {
         boolean foundExtractor = false;
         for (OptionExtractor extractor : extractors) {
             if (extractor.acceptsClass(field.getType())) {
@@ -198,10 +213,10 @@ public class Extractor {
                 Object sourceObject = null;
                 Object resultObject = null;
 
-                if(options.containsKey(key)) {
+                if (options.containsKey(key)) {
                     sourceObject = options.get(key);
                     resultObject = extractor.getOption(field, sourceObject, key);
-                    if(extractor.isEmptyValue(resultObject)) {
+                    if (extractor.isEmptyValue(resultObject)) {
                         resultObject = extractor.getDefaultValue(field);
                     }
                 }
@@ -220,7 +235,7 @@ public class Extractor {
         }
     }
 
-    protected final void setOptionValue(Object optionsHolder, Field field, String key, Class<?> objectClass, Object value) {
+    public final void setOptionValue(Object optionsHolder, Field field, String key, Class<?> objectClass, Object value) {
         try {
             String setterMethodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
             Method method = optionsHolder.getClass().getMethod(setterMethodName, objectClass);
@@ -249,7 +264,7 @@ public class Extractor {
 // Get option values
 //----------------------------------------------------------------------------------------------------------------------
 
-    protected final Object getOptionValue(Object optionsHolder, Field field, String key) {
+    public final Object getOptionValue(Object optionsHolder, Field field, String key) {
         try {
             String getterMethodName = "get" + key.substring(0, 1).toUpperCase() + key.substring(1);
             Method method = optionsHolder.getClass().getMethod(getterMethodName);
@@ -262,7 +277,7 @@ public class Extractor {
         }
 
         // boolean getters have special naming conventions
-        if(field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
+        if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
             try {
                 String getterMethodName = "is" + key.substring(0, 1).toUpperCase() + key.substring(1);
                 Method method = optionsHolder.getClass().getMethod(getterMethodName);
@@ -334,13 +349,13 @@ public class Extractor {
                     ? field.getAnnotation(Option.class).value()
                     : field.getName();
 
-            if(fieldOptionKey.equals(optionKey)) {
+            if (fieldOptionKey.equals(optionKey)) {
                 optionField = field;
                 break;
             }
         }
 
-        if(optionField != null) {
+        if (optionField != null) {
             for (OptionExtractor extractor : extractors) {
                 if (extractor.acceptsClass(optionField.getType())) {
                     return extractor.describeDefaultValue(optionField);
@@ -349,19 +364,6 @@ public class Extractor {
         }
 
         return "";
-    }
-
-// Utils
-//----------------------------------------------------------------------------------------------------------------------
-
-    public <T> T getInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }
