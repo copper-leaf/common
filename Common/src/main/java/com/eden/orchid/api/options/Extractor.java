@@ -313,6 +313,7 @@ public class Extractor {
             e.printStackTrace();
         }
 
+        // allow for generic map-like get(String) methods
         try {
             Method method = optionsHolder.getClass().getMethod("get", String.class);
             return method.invoke(optionsHolder, key);
@@ -323,6 +324,7 @@ public class Extractor {
             e.printStackTrace();
         }
 
+        // fallback to direct field access
         try {
             return field.get(optionsHolder);
         }

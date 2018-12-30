@@ -272,7 +272,6 @@ public class FlagsParserTest {
                         }}),
                         Collections.emptyMap()
                 )
-
         );
     }
 

@@ -1,4 +1,4 @@
-tagPrefix = 'v'
+tagPrefix = ''
 autobump {
     majorPattern            = ~/^\[major\]/
     minorPattern            = ~/^\[minor\]/

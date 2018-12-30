@@ -312,7 +312,7 @@ public final class FlagsParser {
 
     @Data
     public static class ParseResult {
-        private final FlagsParser parser;
+        private final FlagsParser source;
         private final Map<String, Object> validFlags;
         private final Map<String, Object> invalidFlags;
         private final String[] originalArgs;

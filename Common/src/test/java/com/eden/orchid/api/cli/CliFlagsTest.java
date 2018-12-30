@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
@@ -31,34 +32,140 @@ public class CliFlagsTest {
     void testParsingOptionsFlagsArrayValues() {
         TestCliOptions1 cliOptions1 = new TestCliOptions1();
         TestCliOptions2 cliOptions2 = new TestCliOptions2();
-        FlagsParser.ParseResult results = underTest.parseArgs(
+        CliFlags.ParseResult results = underTest.parseArgs(
                 Arrays.asList(cliOptions1, cliOptions2),
                 Arrays.asList("task"),
-                new String[] {"build", "--baseUrl", "https://orchid.netlify.com/", "--port", "9000"}
+                new String[]{"build", "--baseUrl", "https://orchid.netlify.com/", "--port", "9000"},
+                null
         );
 
-        assertThat(results.getParser().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
-        assertThat(results.getParser().getValidAliases(), hasEntry("t", "task"));
+        assertThat(results.success(), is(true));
+        assertThat(results.getParseResult().getSource().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
+        assertThat(results.getParseResult().getSource().getValidAliases(), hasEntry("t", "task"));
 
         assertThat(cliOptions1.task, is(equalTo("build")));
         assertThat(cliOptions1.baseUrl, is(equalTo("https://orchid.netlify.com/")));
         assertThat(cliOptions2.port, is(equalTo(9000)));
+
+        CliFlags.FlagValue taskValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("task"))
+                .findFirst()
+                .orElse(null);
+        assertThat(taskValue, is(notNullValue()));
+        assertThat(taskValue.getType(), is(equalTo(String.class)));
+        assertThat(taskValue.getValue(), is(equalTo("build")));
+
+        CliFlags.FlagValue baseUrlValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("baseUrl"))
+                .findFirst()
+                .orElse(null);
+        assertThat(baseUrlValue, is(notNullValue()));
+        assertThat(baseUrlValue.getType(), is(equalTo(String.class)));
+        assertThat(baseUrlValue.getValue(), is(equalTo("https://orchid.netlify.com/")));
+
+        CliFlags.FlagValue portValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("port"))
+                .findFirst()
+                .orElse(null);
+        assertThat(portValue, is(notNullValue()));
+        assertThat(portValue.getType(), is(equalTo(int.class)));
+        assertThat(portValue.getValue(), is(equalTo(9000)));
     }
 
     @Test
     void testParsingOptionsFlagsStringValues() {
         TestCliOptions1 cliOptions1 = new TestCliOptions1();
         TestCliOptions2 cliOptions2 = new TestCliOptions2();
-        FlagsParser.ParseResult results = underTest.parseArgs(
+        CliFlags.ParseResult results = underTest.parseArgs(
                 Arrays.asList(cliOptions1, cliOptions2),
                 Arrays.asList("task"),
-                "build --baseUrl https://orchid.netlify.com/ --port 9000"
+                "build --baseUrl https://orchid.netlify.com/ --port 9000",
+                null
         );
 
-        assertThat(results.getParser().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
-        assertThat(results.getParser().getValidAliases(), hasEntry("t", "task"));
+        assertThat(results.success(), is(true));
+        assertThat(results.getParseResult().getSource().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
+        assertThat(results.getParseResult().getSource().getValidAliases(), hasEntry("t", "task"));
 
         assertThat(cliOptions1.task, is(equalTo("build")));
+        assertThat(cliOptions1.baseUrl, is(equalTo("https://orchid.netlify.com/")));
+        assertThat(cliOptions2.port, is(equalTo(9000)));
+
+        CliFlags.FlagValue taskValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("task"))
+                .findFirst()
+                .orElse(null);
+        assertThat(taskValue, is(notNullValue()));
+        assertThat(taskValue.getType(), is(equalTo(String.class)));
+        assertThat(taskValue.getValue(), is(equalTo("build")));
+
+        CliFlags.FlagValue baseUrlValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("baseUrl"))
+                .findFirst()
+                .orElse(null);
+        assertThat(baseUrlValue, is(notNullValue()));
+        assertThat(baseUrlValue.getType(), is(equalTo(String.class)));
+        assertThat(baseUrlValue.getValue(), is(equalTo("https://orchid.netlify.com/")));
+
+        CliFlags.FlagValue portValue = results
+                .getFlagValues()
+                .stream()
+                .filter(it -> it.getKey().equals("port"))
+                .findFirst()
+                .orElse(null);
+        assertThat(portValue, is(notNullValue()));
+        assertThat(portValue.getType(), is(equalTo(int.class)));
+        assertThat(portValue.getValue(), is(equalTo(9000)));
+    }
+
+    @Test
+    void testAdditionalArgsOverridesStringArrayArgs() {
+        TestCliOptions1 cliOptions1 = new TestCliOptions1();
+        TestCliOptions2 cliOptions2 = new TestCliOptions2();
+        CliFlags.ParseResult results = underTest.parseArgs(
+                Arrays.asList(cliOptions1, cliOptions2),
+                Arrays.asList("task"),
+                new String[]{"build", "--baseUrl", "https://orchid.netlify.com/", "--port", "9000"},
+                new HashMap<String, Object>() {{
+                    put("task", "build2");
+                }}
+        );
+
+        assertThat(results.getParseResult().getSource().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
+        assertThat(results.getParseResult().getSource().getValidAliases(), hasEntry("t", "task"));
+
+        assertThat(cliOptions1.task, is(equalTo("build2")));
+        assertThat(cliOptions1.baseUrl, is(equalTo("https://orchid.netlify.com/")));
+        assertThat(cliOptions2.port, is(equalTo(9000)));
+    }
+
+    @Test
+    void testAdditionalArgsOverridesStringArgs() {
+        TestCliOptions1 cliOptions1 = new TestCliOptions1();
+        TestCliOptions2 cliOptions2 = new TestCliOptions2();
+        CliFlags.ParseResult results = underTest.parseArgs(
+                Arrays.asList(cliOptions1, cliOptions2),
+                Arrays.asList("task"),
+                "build --baseUrl https://orchid.netlify.com/ --port 9000",
+                new HashMap<String, Object>() {{
+                    put("task", "build2");
+                }}
+        );
+
+        assertThat(results.getParseResult().getSource().getValidNames(), containsInAnyOrder("task", "baseUrl", "port"));
+        assertThat(results.getParseResult().getSource().getValidAliases(), hasEntry("t", "task"));
+
+        assertThat(cliOptions1.task, is(equalTo("build2")));
         assertThat(cliOptions1.baseUrl, is(equalTo("https://orchid.netlify.com/")));
         assertThat(cliOptions2.port, is(equalTo(9000)));
     }
@@ -80,6 +187,5 @@ public class CliFlagsTest {
         public int port;
 
     }
-
 
 }

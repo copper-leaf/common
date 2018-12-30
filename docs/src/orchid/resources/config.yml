@@ -41,8 +41,7 @@ services:
   publications:
     stages:
       - type: ghPages
-        repo: 'JavaEden/Orchid'
+        repo: 'JavaEden/Common'
         username: 'cjbrooks12'
-        publishType: VersionedBranchWithLatest
       - type: githubReleases
-        repo: 'JavaEden/Orchid'
+        repo: 'JavaEden/Common'
