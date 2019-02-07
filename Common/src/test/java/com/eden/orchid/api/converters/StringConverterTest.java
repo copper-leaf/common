@@ -60,6 +60,7 @@ public class StringConverterTest {
                 Arguments.of(true,            true, "true"),
                 Arguments.of(false,           true, "false"),
                 Arguments.of("45",            true, "45"),
+                Arguments.of("#",             true, "#"),
                 Arguments.of(new JSONArray(), true, "[]"),
                 Arguments.of(null,            true, "")
         );

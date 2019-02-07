@@ -31,7 +31,7 @@ dependencies {
     testCompile "org.junit.jupiter:junit-jupiter-params:$junit_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 
-    implementation 'com.eden:Clog:2.0.5'
+    implementation 'com.eden:Clog:2.0.7'
     implementation 'org.json:json:20180130'
     implementation 'javax.inject:javax.inject:1'
 
