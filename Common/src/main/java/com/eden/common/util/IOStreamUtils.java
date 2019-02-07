@@ -17,7 +17,7 @@ public class IOStreamUtils {
 
         private StringBuffer output;
 
-        protected InputStreamCollector(InputStream inputStream) {
+        public InputStreamCollector(InputStream inputStream) {
             super(inputStream);
         }
 
