@@ -170,6 +170,18 @@ public class CliFlagsTest {
         assertThat(cliOptions2.port, is(equalTo(9000)));
     }
 
+    @Test
+    void testCliHelperClass() {
+        TestCliOptions1 cliOptions1 = Cli.parseArgsInto(
+                new TestCliOptions1(),
+                new String[]{"build", "--baseUrl", "https://orchid.netlify.com/", "--port", "9000"},
+                Arrays.asList("task")
+        );
+
+        assertThat(cliOptions1.task, is(equalTo("build")));
+        assertThat(cliOptions1.baseUrl, is(equalTo("https://orchid.netlify.com/")));
+    }
+
     public static class TestCliOptions1 {
 
         @Option
