@@ -184,8 +184,14 @@ public class Extractor {
             OptionArchetype archetypeDataProvider = instanceCreator.getInstance(archetype.value());
 
             Map<String, Object> archetypeConfiguration;
-            if (actualOptions.containsKey(archetype.key()) && actualOptions.get(archetype.key()) instanceof Map) {
-                archetypeConfiguration = (Map<String, Object>) actualOptions.get(archetype.key());
+            if (actualOptions.containsKey(archetype.key())) {
+                Object actualOptionsArchetypeValue = actualOptions.get(archetype.key());
+                if(actualOptionsArchetypeValue instanceof Map) {
+                    archetypeConfiguration = (Map<String, Object>) actualOptionsArchetypeValue;
+                }
+                else {
+                    archetypeConfiguration = Collections.singletonMap(archetype.key(), actualOptionsArchetypeValue);
+                }
             }
             else {
                 archetypeConfiguration = new HashMap<>();
