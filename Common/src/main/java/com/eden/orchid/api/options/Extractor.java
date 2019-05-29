@@ -173,6 +173,12 @@ public class Extractor {
         }
 
         Collections.reverse(archetypeAnnotations);
+        Collections.sort(archetypeAnnotations, new Comparator<Archetype>() {
+            @Override
+            public int compare(Archetype o1, Archetype o2) {
+                return o1.order() - o2.order();
+            }
+        });
 
         return archetypeAnnotations;
     }

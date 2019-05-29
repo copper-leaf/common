@@ -14,4 +14,5 @@ import java.lang.annotation.Target;
 public @interface Archetype {
     String key();
     Class<? extends OptionArchetype> value();
+    int order() default 0;
 }
