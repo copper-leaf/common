@@ -1,8 +1,10 @@
-apply plugin: "java"
-apply plugin: "jacoco"
-apply plugin: "idea"
-apply plugin: "com.jfrog.bintray"
-apply plugin: "maven-publish"
+plugins {
+    id "java"
+    id "jacoco"
+    id "idea"
+    id "com.jfrog.bintray" version "1.8.4"
+    id "maven-publish"
+}
 
 group rootProject.group
 version rootProject.version
@@ -15,15 +17,18 @@ compileTestJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 }
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 repositories {
     jcenter()
     maven { url 'https://jitpack.io' }
 }
 
-def junit_version = '5.1.0'
-
 dependencies {
+    def junit_version = '5.1.0'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'org.mockito:mockito-core:2.21.0'
     testCompile "org.junit.jupiter:junit-jupiter-api:$junit_version"
@@ -37,24 +42,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-// Javadoc
-//----------------------------------------------------------------------------------------------------------------------
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from project.sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
 }
 
 // Jacoco Code Coverage
@@ -71,86 +58,73 @@ check.dependsOn jacocoTestReport
 // Publish to Bintray
 //----------------------------------------------------------------------------------------------------------------------
 
-afterEvaluate { project ->
-    def pomConfig = {
-        scm {
-            url "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
-            connection "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
-            developerConnection "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
+def pomConfig = {
+    scm {
+        url "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
+        connection "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
+        developerConnection "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
+    }
+    licenses {
+        license {
+            name 'MIT'
+            url 'https://opensource.org/licenses/mit'
+            distribution 'repo'
         }
-        licenses {
-            license {
-                name 'MIT'
-                url 'https://opensource.org/licenses/mit'
-                distribution 'repo'
-            }
+    }
+    developers {
+        developer {
+            id 'JavaEden'
+            name 'Casey Brooks'
+            email 'cjbrooks12@gmail.com'
         }
-        developers {
-            developer {
-                id 'JavaEden'
-                name 'Casey Brooks'
-                email 'cjbrooks12@gmail.com'
+    }
+}
+
+publishing {
+    publications {
+        Common(MavenPublication) {
+            from project.components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', project.description)
+                root.appendNode('name', project.ext.githubProjectName)
+                root.appendNode('url', "https://javaeden.github.io/${project.ext.githubProjectName}/${project.name}")
+                root.children().last() + pomConfig
             }
         }
     }
+}
 
-    project.publishing {
-        publications {
-            CommonPublication(MavenPublication) {
-                from project.components.java
-                artifact project.sourcesJar
-                artifact project.javadocJar
-                groupId project.group
-                artifactId project.name
-                version project.version
-                pom.withXml {
-                    def root = asNode()
-                    root.appendNode('description', project.description)
-                    root.appendNode('name', project.ext.githubProjectName)
-                    root.appendNode('url', "https://javaeden.github.io/${project.ext.githubProjectName}/${project.name}")
-                    root.children().last() + pomConfig
-                }
-            }
-        }
-    }
+bintray {
+    user = "${project.properties['bintray_username']}"
+    key = "${project.properties['bintray_apiKey']}"
+    publications = ['Common']
 
-    bintray {
-        user = "${project.properties['bintray_username']}"
-        key = "${project.properties['bintray_apiKey']}"
-        publications = ['CommonPublication']
+    dryRun = project.hasProperty('dryDeploy')
+    publish = !project.hasProperty('dryDeploy')
+    override = true
 
-        dryRun = project.hasProperty('dryDeploy')
-        publish = !project.hasProperty('dryDeploy')
-        override = true
+    pkg {
+        repo = "Eden"
+        name = "${project.name}"
+        userOrg = 'javaeden'
+        licenses = ['MIT']
+        vcsUrl = "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
 
-        pkg {
-            repo = "Eden"
-            name = "${project.name}"
-            userOrg = 'javaeden'
-            licenses = ['MIT']
-            vcsUrl = "https://github.com/JavaEden/${project.ext.githubProjectName}.git"
+        version {
+            name = "${project.version}"
+            desc = "${project.name} ${project.version}"
+            released = new Date()
 
-            version {
-                name = "${project.version}"
-                desc = "${project.name} ${project.version}"
-                released = new Date()
-
-                gpg {
-                    sign = true
-                }
-                mavenCentralSync {
-                    sync = (project.hasProperty('includeMavenCentralSync'))
-                    user = "${project.properties['mavenCentral_username']}"
-                    password = "${project.properties['mavenCentral_password']}"
-                }
+            gpg {
+                sign = true
             }
         }
     }
 }
 
 project.tasks.publish.dependsOn bintrayUpload
-
-task deploy {
-    dependsOn project.tasks.publish
-    doLast { }
-}

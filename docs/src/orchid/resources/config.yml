@@ -16,11 +16,22 @@ theme:
     - type: 'wiki'
       title: 'Wiki'
       topLevel: true
-    - type: 'javadocPackages'
-    - type: 'javadocClasses'
+    - type: 'sourcedocPages'
+      moduleType: 'javadoc'
+      node: 'classes'
+      asSubmenu: true
+      submenuTitle: 'Classes'
+    - type: 'sourcedocPages'
+      moduleType: 'javadoc'
+      node: 'packages'
+      asSubmenu: true
+      submenuTitle: 'Packages'
   trianglifyOptions:
     x_colors: ['#740001', '#eeba30', '#740001']
   useSidebarSearch: true
+  legacySearch: false
+  metaComponents:
+    - type: 'orchidSearch'
 
 allPages:
   components:
@@ -40,7 +51,7 @@ javadoc:
 services:
   publications:
     stages:
-      - type: ghPages
+      - type: githubPages
         repo: 'JavaEden/Common'
         username: 'cjbrooks12'
       - type: githubReleases
