@@ -44,10 +44,10 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
                 if(potentialMap.first) {
                     Map<String, Object> actualMap = (Map<String, Object>) potentialMap.second;
                     List<Object> list = mapToList(clazz, actualMap, keyName);
-                    return new EdenPair<>(false, (Iterable) list);
+                    return new EdenPair<>(true, (Iterable) list);
                 }
                 else {
-                    return new EdenPair<>(false, (Iterable) Collections.singletonList(objectToConvert));
+                    return new EdenPair<>(true, (Iterable) Collections.singletonList(objectToConvert));
                 }
             }
         }

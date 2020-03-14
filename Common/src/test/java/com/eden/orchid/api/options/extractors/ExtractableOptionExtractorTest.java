@@ -1,5 +1,6 @@
 package com.eden.orchid.api.options.extractors;
 
+import com.eden.common.util.EdenPair;
 import com.eden.orchid.api.converters.ExtractableConverter;
 import com.eden.orchid.api.converters.FlexibleMapConverter;
 import com.eden.orchid.api.converters.IntegerConverter;
@@ -18,6 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +74,13 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
             return Objects.hash(innerStringValue, innerIntValue);
         }
 
-
+        @Override
+        public String toString() {
+            return "TestExtractableClass{" +
+                    "innerStringValue='" + innerStringValue + '\'' +
+                    ", innerIntValue=" + innerIntValue +
+                    '}';
+        }
     }
 
     public static class TestArrayClass {
@@ -134,8 +142,7 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
         if (sourceStringValue != null) {
             if (sourceStringValue.toString().equals("_nullValue")) {
                 innerOptions.put("innerStringValue", (String) null);
-            }
-            else {
+            } else {
                 innerOptions.put("innerStringValue", sourceStringValue);
             }
         }
@@ -152,6 +159,7 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
         assertThat(underTest.testValue.innerStringValue, is(equalTo(expectedExtractedStringValue)));
         assertThat(underTest.testValue.innerIntValue, is(equalTo(expectedExtractedIntValue)));
     }
+
     static Stream<Arguments> getOptionsArguments() throws Throwable {
         return Stream.of(
                 Arguments.of(new TestClass(), "asdf", 1, "asdf", 1),
@@ -172,7 +180,7 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
         int resultArgLength = expectedExtractedStringValues.length;
         final JSONObject options = new JSONObject();
 
-        if(sourceStringValues != null && sourceIntValues != null) {
+        if (sourceStringValues != null && sourceIntValues != null) {
             int sourceArgLength = sourceStringValues.length;
 
             assertThat(sourceStringValues.length, is(equalTo(sourceArgLength)));
@@ -186,8 +194,7 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
                 if (sourceStringValues[i] != null) {
                     if (sourceStringValues[i].toString().equals("_nullValue")) {
                         innerOptions.put("innerStringValue", (String) null);
-                    }
-                    else {
+                    } else {
                         innerOptions.put("innerStringValue", sourceStringValues[i]);
                     }
                 }
@@ -213,16 +220,100 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
     static Stream<Arguments> getListOptionsArguments() throws Throwable {
         return Stream.of(
                 Arguments.of(
-                        new Object[] {"asdf1", "asdf2"},
-                        new Object[] {1, 2},
-                        new String[] {"asdf1", "asdf2"},
-                        new int[] {1, 2}
+                        new Object[]{"asdf1", "asdf2"},
+                        new Object[]{1, 2},
+                        new String[]{"asdf1", "asdf2"},
+                        new int[]{1, 2}
                 ),
                 Arguments.of(
                         null,
                         null,
-                        new String[] {"one", "two"},
-                        new int[] {0, 0}
+                        new String[]{"one", "two"},
+                        new int[]{0, 0}
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getListOptionsArgumentsJson")
+    public void testExtractOptionListFromJson(
+            final String sourceJson,
+            final List<TestExtractableClass> expectedExtractedValues
+    ) throws Throwable {
+        final TestListClass underTest = new TestListClass();
+
+        int resultArgLength = expectedExtractedValues.size();
+        final JSONObject options = new JSONObject(sourceJson);
+
+        assertThat(underTest.testValues, is(nullValue()));
+
+        extractor.extractOptions(underTest, options.toMap());
+
+        assertThat(underTest.testValues, is(notNullValue()));
+        assertThat(underTest.testValues.size(), is(equalTo(resultArgLength)));
+
+        for (int i = 0; i < underTest.testValues.size(); i++) {
+            assertThat(underTest.testValues.get(i), is(equalTo(expectedExtractedValues.get(i))));
+        }
+    }
+
+    static Stream<Arguments> getListOptionsArgumentsJson() throws Throwable {
+        return Stream.of(
+                Arguments.of(
+                        "{" +
+                            "\"testValues\": [" +
+                                "{\"innerStringValue\": \"asdf1\", \"innerIntValue\": 1}," +
+                                "{\"innerStringValue\": \"asdf2\", \"innerIntValue\": 2}," +
+                                "{\"innerStringValue\": \"asdf3\"}," +
+                                "\"asdf4\"" +
+                            "]" +
+                        "}",
+                        Arrays.asList(
+                                new TestExtractableClass("asdf1", 1),
+                                new TestExtractableClass("asdf2", 2),
+                                new TestExtractableClass("asdf3", 0),
+                                new TestExtractableClass("asdf4", 0)
+                        )
+                ),
+                Arguments.of(
+                        "{" +
+                            "\"testValues\": {" +
+                                "\"asdf1\": {\"innerIntValue\": 1}," +
+                                "\"asdf2\": {\"innerIntValue\": 2}," +
+                                "\"asdf3\": {\"innerIntValue\": 3}" +
+                            "}" +
+                        "}",
+                        Arrays.asList(
+                                new TestExtractableClass("asdf1", 1),
+                                new TestExtractableClass("asdf2", 2),
+                                new TestExtractableClass("asdf3", 3)
+                        )
+                ),
+                Arguments.of(
+                        "{" +
+                            "\"testValues\": {" +
+                                "\"asdf1\": {\"innerIntValue\": 1}" +
+                            "}" +
+                        "}",
+                        Arrays.asList(
+                                new TestExtractableClass("asdf1", 1)
+                        )
+                ),
+                Arguments.of(
+                        "{" +
+                            "\"testValues\": [\"asdf1\"]" +
+                        "}",
+                        Arrays.asList(
+                                new TestExtractableClass("asdf1", 0)
+                        )
+                ),
+                Arguments.of(
+                        "{" +
+                            "\"testValues\": \"asdf1\"" +
+                        "}",
+                        Arrays.asList(
+                                new TestExtractableClass("asdf1", 0)
+                        )
                 )
         );
     }

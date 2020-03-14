@@ -1,6 +1,7 @@
 package com.eden.orchid.api.converters;
 
 import com.eden.common.util.EdenPair;
+import com.eden.common.util.EdenUtils;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
@@ -31,6 +32,9 @@ public class FlexibleMapConverter implements TypeConverter<Map> {
             }
             else if(object instanceof JSONObject) {
                 return new EdenPair<>(true, (Map) ((JSONObject) object).toMap());
+            }
+            else if(!EdenUtils.isEmpty(keyName)) {
+                return new EdenPair<>(true, (Map) Collections.singletonMap(keyName, object));
             }
             else {
                 return new EdenPair<>(false, (Map) Collections.singletonMap(null, object));

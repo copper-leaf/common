@@ -68,9 +68,6 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
 
     @Override
     public List getOption(Field field, Object sourceObject, String key) {
-        EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject);
-        EdenPair<Boolean, Map> valueAsMap = mapConverter.convert(field.getType(), sourceObject);
-
         List<Object> list = new ArrayList<>();
 
         ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
@@ -80,6 +77,9 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
             String impliedKey = (field.isAnnotationPresent(ImpliedKey.class))
                     ? field.getAnnotation(ImpliedKey.class).value()
                     : null;
+
+            EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject, impliedKey);
+            EdenPair<Boolean, Map> valueAsMap = mapConverter.convert(field.getType(), sourceObject, impliedKey);
 
             if(valueAsIterable.first) {
                 for(Object item : valueAsIterable.second) {
@@ -92,14 +92,15 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
             else if(valueAsMap.first) {
                 for(Map.Entry<String, Object> item : ((Map<String, Object>) valueAsMap.second).entrySet()) {
                     Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
-                    Map<String, Object> config = convert(item.getValue());
-                    config.put(impliedKey, item.getKey());
-                    holder.extractOptions(extractor.get(), config);
+                    EdenPair<Boolean, Map> config = convert(listClass, item.getValue(), impliedKey);
+                    holder.extractOptions(extractor.get(), config.second);
                     list.add(holder);
                 }
             }
         }
         else {
+            EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject);
+
             for(Object item : valueAsIterable.second) {
                 EdenPair<Boolean, ?> converted = converters.convert(item, listClass);
 
@@ -210,7 +211,6 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         return "empty list";
     }
 
-
     private EdenPair<Boolean, Map> convert(Class clazz, Object object, String keyName) {
         if(object != null) {
             Map<String, Object> sourceMap = null;
@@ -222,13 +222,6 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
                 else if(object instanceof JSONObject) {
                     sourceMap = (Map) ((JSONObject) object).toMap();
                 }
-                if(sourceMap.size() == 1) {
-                    String key = new ArrayList<>(sourceMap.keySet()).get(0);
-                    Map<String, Object> value = convert(sourceMap.get(key));
-
-                    value.put(keyName, key);
-                    sourceMap = value;
-                }
             }
             else {
                 sourceMap = Collections.singletonMap(keyName, object);
@@ -238,19 +231,6 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         }
 
         return new EdenPair<>(false, (Map) new HashMap());
-    }
-
-    public Map<String, Object> convert(Object object) {
-        if(object != null) {
-            if (object instanceof Map) {
-                return (Map<String, Object>) object;
-            }
-            else if(object instanceof JSONObject) {
-                return ((JSONObject) object).toMap();
-            }
-        }
-
-        return new HashMap<>();
     }
 
 }
