@@ -2,10 +2,6 @@ package com.eden.orchid.api.cli;
 
 import com.caseyjbrooks.clog.Clog;
 import com.eden.common.util.EdenUtils;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,17 +12,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Getter
 public final class FlagsParser {
 
     private final Set<String> validNames;
     private final Map<String, String> validAliases;
     private final List<String> positionalNames;
 
-    @Builder
     public FlagsParser(
-            @Singular Set<String> validNames,
-            @Singular Map<String, String> validAliases,
+            Set<String> validNames,
+            Map<String, String> validAliases,
             List<String> positionalNames) {
         this.validNames = (!EdenUtils.isEmpty(validNames)) ? validNames : new HashSet<String>();
         this.validAliases = (!EdenUtils.isEmpty(validAliases)) ? validAliases : new HashMap<String, String>();
@@ -43,6 +37,10 @@ public final class FlagsParser {
                 throw new IllegalArgumentException("Positional arg references a flag that is not a valid name: " + positionalArg);
             }
         }
+    }
+
+    public static FlagsParserBuilder builder() {
+        return new FlagsParserBuilder();
     }
 
     /**
@@ -310,7 +308,18 @@ public final class FlagsParser {
         }
     }
 
-    @Data
+    public Set<String> getValidNames() {
+        return this.validNames;
+    }
+
+    public Map<String, String> getValidAliases() {
+        return this.validAliases;
+    }
+
+    public List<String> getPositionalNames() {
+        return this.positionalNames;
+    }
+
     public static class ParseResult {
         private final FlagsParser source;
         private final Map<String, Object> validFlags;
@@ -318,9 +327,185 @@ public final class FlagsParser {
         private final String[] originalArgs;
         private String originalString;
 
+        public ParseResult(FlagsParser source, Map<String, Object> validFlags, Map<String, Object> invalidFlags, String[] originalArgs) {
+            this.source = source;
+            this.validFlags = validFlags;
+            this.invalidFlags = invalidFlags;
+            this.originalArgs = originalArgs;
+        }
+
         public boolean success() {
             return EdenUtils.isEmpty(invalidFlags);
         }
+
+        public FlagsParser getSource() {
+            return this.source;
+        }
+
+        public Map<String, Object> getValidFlags() {
+            return this.validFlags;
+        }
+
+        public Map<String, Object> getInvalidFlags() {
+            return this.invalidFlags;
+        }
+
+        public String[] getOriginalArgs() {
+            return this.originalArgs;
+        }
+
+        public String getOriginalString() {
+            return this.originalString;
+        }
+
+        public void setOriginalString(String originalString) {
+            this.originalString = originalString;
+        }
+
+        public boolean equals(final Object o) {
+            if (o == this) return true;
+            if (!(o instanceof ParseResult)) return false;
+            final ParseResult other = (ParseResult) o;
+            if (!other.canEqual((Object) this)) return false;
+            final Object this$source = this.getSource();
+            final Object other$source = other.getSource();
+            if (this$source == null ? other$source != null : !this$source.equals(other$source)) return false;
+            final Object this$validFlags = this.getValidFlags();
+            final Object other$validFlags = other.getValidFlags();
+            if (this$validFlags == null ? other$validFlags != null : !this$validFlags.equals(other$validFlags))
+                return false;
+            final Object this$invalidFlags = this.getInvalidFlags();
+            final Object other$invalidFlags = other.getInvalidFlags();
+            if (this$invalidFlags == null ? other$invalidFlags != null : !this$invalidFlags.equals(other$invalidFlags))
+                return false;
+            if (!java.util.Arrays.deepEquals(this.getOriginalArgs(), other.getOriginalArgs())) return false;
+            final Object this$originalString = this.getOriginalString();
+            final Object other$originalString = other.getOriginalString();
+            if (this$originalString == null ? other$originalString != null : !this$originalString.equals(other$originalString))
+                return false;
+            return true;
+        }
+
+        protected boolean canEqual(final Object other) {
+            return other instanceof ParseResult;
+        }
+
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            final Object $source = this.getSource();
+            result = result * PRIME + ($source == null ? 43 : $source.hashCode());
+            final Object $validFlags = this.getValidFlags();
+            result = result * PRIME + ($validFlags == null ? 43 : $validFlags.hashCode());
+            final Object $invalidFlags = this.getInvalidFlags();
+            result = result * PRIME + ($invalidFlags == null ? 43 : $invalidFlags.hashCode());
+            result = result * PRIME + java.util.Arrays.deepHashCode(this.getOriginalArgs());
+            final Object $originalString = this.getOriginalString();
+            result = result * PRIME + ($originalString == null ? 43 : $originalString.hashCode());
+            return result;
+        }
+
+        public String toString() {
+            return "FlagsParser.ParseResult(source=" + this.getSource() + ", validFlags=" + this.getValidFlags() + ", invalidFlags=" + this.getInvalidFlags() + ", originalArgs=" + java.util.Arrays.deepToString(this.getOriginalArgs()) + ", originalString=" + this.getOriginalString() + ")";
+        }
     }
 
+    public static class FlagsParserBuilder {
+        private ArrayList<String> validNames;
+        private ArrayList<String> validAliases$key;
+        private ArrayList<String> validAliases$value;
+        private List<String> positionalNames;
+
+        FlagsParserBuilder() {
+        }
+
+        public FlagsParser.FlagsParserBuilder validName(String validName) {
+            if (this.validNames == null) this.validNames = new ArrayList<String>();
+            this.validNames.add(validName);
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder validNames(Collection<? extends String> validNames) {
+            if (this.validNames == null) this.validNames = new ArrayList<String>();
+            this.validNames.addAll(validNames);
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder clearValidNames() {
+            if (this.validNames != null)
+                this.validNames.clear();
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder validAlias(String validAliasKey, String validAliasValue) {
+            if (this.validAliases$key == null) {
+                this.validAliases$key = new ArrayList<String>();
+                this.validAliases$value = new ArrayList<String>();
+            }
+            this.validAliases$key.add(validAliasKey);
+            this.validAliases$value.add(validAliasValue);
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder validAliases(Map<? extends String, ? extends String> validAliases) {
+            if (this.validAliases$key == null) {
+                this.validAliases$key = new ArrayList<String>();
+                this.validAliases$value = new ArrayList<String>();
+            }
+            for (final Map.Entry<? extends String, ? extends String> $lombokEntry : validAliases.entrySet()) {
+                this.validAliases$key.add($lombokEntry.getKey());
+                this.validAliases$value.add($lombokEntry.getValue());
+            }
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder clearValidAliases() {
+            if (this.validAliases$key != null) {
+                this.validAliases$key.clear();
+                this.validAliases$value.clear();
+            }
+            return this;
+        }
+
+        public FlagsParser.FlagsParserBuilder positionalNames(List<String> positionalNames) {
+            this.positionalNames = positionalNames;
+            return this;
+        }
+
+        public FlagsParser build() {
+            Set<String> validNames;
+            switch (this.validNames == null ? 0 : this.validNames.size()) {
+                case 0:
+                    validNames = java.util.Collections.emptySet();
+                    break;
+                case 1:
+                    validNames = java.util.Collections.singleton(this.validNames.get(0));
+                    break;
+                default:
+                    validNames = new java.util.LinkedHashSet<String>(this.validNames.size() < 1073741824 ? 1 + this.validNames.size() + (this.validNames.size() - 3) / 3 : Integer.MAX_VALUE);
+                    validNames.addAll(this.validNames);
+                    validNames = java.util.Collections.unmodifiableSet(validNames);
+            }
+            Map<String, String> validAliases;
+            switch (this.validAliases$key == null ? 0 : this.validAliases$key.size()) {
+                case 0:
+                    validAliases = java.util.Collections.emptyMap();
+                    break;
+                case 1:
+                    validAliases = java.util.Collections.singletonMap(this.validAliases$key.get(0), this.validAliases$value.get(0));
+                    break;
+                default:
+                    validAliases = new java.util.LinkedHashMap<String, String>(this.validAliases$key.size() < 1073741824 ? 1 + this.validAliases$key.size() + (this.validAliases$key.size() - 3) / 3 : Integer.MAX_VALUE);
+                    for (int $i = 0; $i < this.validAliases$key.size(); $i++)
+                        validAliases.put(this.validAliases$key.get($i), (String) this.validAliases$value.get($i));
+                    validAliases = java.util.Collections.unmodifiableMap(validAliases);
+            }
+
+            return new FlagsParser(validNames, validAliases, positionalNames);
+        }
+
+        public String toString() {
+            return "FlagsParser.FlagsParserBuilder(validNames=" + this.validNames + ", validAliases$key=" + this.validAliases$key + ", validAliases$value=" + this.validAliases$value + ", positionalNames=" + this.positionalNames + ")";
+        }
+    }
 }

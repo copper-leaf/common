@@ -7,13 +7,11 @@ import com.eden.orchid.api.options.annotations.AllOptions;
 import com.eden.orchid.api.options.annotations.Archetype;
 import com.eden.orchid.api.options.annotations.Archetypes;
 import com.eden.orchid.api.options.annotations.Option;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,18 +22,14 @@ import java.util.Set;
 
 public class Extractor {
 
-    @Getter
     private final List<OptionExtractor> extractors;
 
-    @Getter
     private final OptionsValidator validator;
 
-    @Getter
     private final InstanceCreator instanceCreator;
 
-    @Builder
     public Extractor(
-            @Singular List<OptionExtractor> extractors,
+            List<OptionExtractor> extractors,
             OptionsValidator validator,
             InstanceCreator instanceCreator
     ) {
@@ -49,6 +43,10 @@ public class Extractor {
         this.extractors = Collections.unmodifiableList(originalExtractors);
         this.validator = validator;
         this.instanceCreator = (instanceCreator != null) ? instanceCreator : new DefaultInstanceCreator();
+    }
+
+    public static Extractor.ExtractorBuilder builder() {
+        return new ExtractorBuilder();
     }
 
     public final void extractOptions(Object optionsHolder, Map<String, Object> options) {
@@ -380,4 +378,72 @@ public class Extractor {
         return "";
     }
 
+    public List<OptionExtractor> getExtractors() {
+        return this.extractors;
+    }
+
+    public OptionsValidator getValidator() {
+        return this.validator;
+    }
+
+    public InstanceCreator getInstanceCreator() {
+        return this.instanceCreator;
+    }
+
+    public static class ExtractorBuilder {
+        private ArrayList<OptionExtractor> extractors;
+        private OptionsValidator validator;
+        private InstanceCreator instanceCreator;
+
+        ExtractorBuilder() {
+        }
+
+        public Extractor.ExtractorBuilder extractor(OptionExtractor extractor) {
+            if (this.extractors == null) this.extractors = new ArrayList<OptionExtractor>();
+            this.extractors.add(extractor);
+            return this;
+        }
+
+        public Extractor.ExtractorBuilder extractors(Collection<? extends OptionExtractor> extractors) {
+            if (this.extractors == null) this.extractors = new ArrayList<OptionExtractor>();
+            this.extractors.addAll(extractors);
+            return this;
+        }
+
+        public Extractor.ExtractorBuilder clearExtractors() {
+            if (this.extractors != null)
+                this.extractors.clear();
+            return this;
+        }
+
+        public Extractor.ExtractorBuilder validator(OptionsValidator validator) {
+            this.validator = validator;
+            return this;
+        }
+
+        public Extractor.ExtractorBuilder instanceCreator(InstanceCreator instanceCreator) {
+            this.instanceCreator = instanceCreator;
+            return this;
+        }
+
+        public Extractor build() {
+            List<OptionExtractor> extractors;
+            switch (this.extractors == null ? 0 : this.extractors.size()) {
+                case 0:
+                    extractors = Collections.emptyList();
+                    break;
+                case 1:
+                    extractors = Collections.singletonList(this.extractors.get(0));
+                    break;
+                default:
+                    extractors = Collections.unmodifiableList(new ArrayList<OptionExtractor>(this.extractors));
+            }
+
+            return new Extractor(extractors, validator, instanceCreator);
+        }
+
+        public String toString() {
+            return "Extractor.ExtractorBuilder(extractors=" + this.extractors + ", validator=" + this.validator + ", instanceCreator=" + this.instanceCreator + ")";
+        }
+    }
 }
