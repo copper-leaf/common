@@ -60,7 +60,7 @@ public class DefaultExtractorTest {
         public ExtractableOptionExtractorTest.TestExtractableClass extractableOption;
 
         @Option
-        @ImpliedKey("innerStringValue")
+        @ImpliedKey(typeKey = "innerStringValue")
         public List<ExtractableOptionExtractorTest.TestExtractableClass> extractableOptionList;
 
     }

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class FlexibleIterableConverterTest {
 
     @Test
     void testArray() {
-        String[] source = new String[] {"test"};
+        String[] source = new String[]{"test"};
 
         EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source);
 
@@ -117,13 +118,35 @@ public class FlexibleIterableConverterTest {
     }
 
     @Test
+    void testMapOfStrings_typeKey() {
+        Map<String, String> source = new LinkedHashMap<>();
+        source.put("defaultType1", "defaultValue1");
+        source.put("defaultType2", "defaultValue2");
+
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "type", "value");
+
+        assertThat(result.first, is(equalTo(true)));
+
+        List<Map<String, String>> maps = new ArrayList<>();
+        for (Object map : result.second) {
+            maps.add((Map<String, String>) map);
+        }
+
+        assertThat(maps.get(0).get("type"), is(equalTo("defaultType1")));
+        assertThat(maps.get(0).get("value"), is(equalTo("defaultValue1")));
+
+        assertThat(maps.get(1).get("type"), is(equalTo("defaultType2")));
+        assertThat(maps.get(1).get("value"), is(equalTo("defaultValue2")));
+    }
+
+    @Test
     void testMapOfMaps() {
         Map<String, Map<String, String>> source = new HashMap<>();
         Map<String, String> object = new HashMap<>();
         object.put("key", "test");
         source.put("otherKey", object);
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey");
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey", null);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<Map<String, String>>) result.second, is(notNullValue()));
@@ -141,7 +164,7 @@ public class FlexibleIterableConverterTest {
         object.put("key", "test");
         source.put("otherKey", object);
 
-        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey");
+        EdenPair<Boolean, Iterable> result = underTest.convert(Iterable.class, source, "newKey", null);
 
         assertThat(result.first, is(equalTo(true)));
         assertThat((Iterable<JSONObject>) result.second, is(notNullValue()));

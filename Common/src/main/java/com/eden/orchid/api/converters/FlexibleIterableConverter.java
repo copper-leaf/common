@@ -26,10 +26,10 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
 
     @Override
     public EdenPair<Boolean, Iterable> convert(Class clazz, Object objectToConvert) {
-        return convert(clazz, objectToConvert, null);
+        return convert(clazz, objectToConvert, null, null);
     }
 
-    public EdenPair<Boolean, Iterable> convert(Class clazz, Object objectToConvert, String keyName) {
+    public EdenPair<Boolean, Iterable> convert(Class clazz, Object objectToConvert, String typeKey, String impliedValueKey) {
         if(objectToConvert != null) {
             if (objectToConvert instanceof Iterable) {
                 return new EdenPair<>(true, (Iterable) objectToConvert);
@@ -43,7 +43,7 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
                 EdenPair<Boolean, Map> potentialMap = mapConverter.convert(clazz, objectToConvert);
                 if(potentialMap.first) {
                     Map<String, Object> actualMap = (Map<String, Object>) potentialMap.second;
-                    List<Object> list = mapToList(clazz, actualMap, keyName);
+                    List<Object> list = mapToList(clazz, actualMap, typeKey, impliedValueKey);
                     return new EdenPair<>(true, (Iterable) list);
                 }
                 else {
@@ -55,16 +55,16 @@ public class FlexibleIterableConverter implements TypeConverter<Iterable> {
         return new EdenPair<>(false, (Iterable) new ArrayList());
     }
 
-    private List<Object> mapToList(Class clazz, Map<String, Object> map, String keyName) {
+    private List<Object> mapToList(Class clazz, Map<String, Object> map, String typeKey, String impliedValueKey) {
         List<Object> list = new ArrayList<>();
 
         for(String key : map.keySet()) {
             Object item = map.get(key);
 
-            EdenPair<Boolean, Map> potentialMapItem = mapConverter.convert(clazz, item);
+            EdenPair<Boolean, Map> potentialMapItem = mapConverter.convert(clazz, item, impliedValueKey);
             if(potentialMapItem.first) {
                 Map<String, Object> mapItem = new HashMap<>((Map<String, Object>) potentialMapItem.second);
-                mapItem.put(keyName, key);
+                mapItem.put(typeKey, key);
                 list.add(mapItem);
             }
             else {

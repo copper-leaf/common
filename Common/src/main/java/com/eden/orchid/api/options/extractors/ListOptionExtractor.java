@@ -74,25 +74,24 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         Class<?> listClass = (Class<?>) stringListType.getActualTypeArguments()[0];
 
         if(Extractable.class.isAssignableFrom(listClass)) {
-            String impliedKey = (field.isAnnotationPresent(ImpliedKey.class))
-                    ? field.getAnnotation(ImpliedKey.class).value()
-                    : null;
+            final String typeKey;
+            final String valueKey;
+            if(field.isAnnotationPresent(ImpliedKey.class)) {
+                ImpliedKey impliedKey = field.getAnnotation(ImpliedKey.class);
+                typeKey = impliedKey.typeKey();
+                valueKey = impliedKey.valueKey();
+            }
+            else {
+                typeKey = null;
+                valueKey = null;
+            }
 
-            EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject, impliedKey);
-            EdenPair<Boolean, Map> valueAsMap = mapConverter.convert(field.getType(), sourceObject, impliedKey);
+            EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), sourceObject, typeKey, valueKey);
 
             if(valueAsIterable.first) {
                 for(Object item : valueAsIterable.second) {
                     Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
-                    EdenPair<Boolean, Map> config = convert(listClass, item, impliedKey);
-                    holder.extractOptions(extractor.get(), config.second);
-                    list.add(holder);
-                }
-            }
-            else if(valueAsMap.first) {
-                for(Map.Entry<String, Object> item : ((Map<String, Object>) valueAsMap.second).entrySet()) {
-                    Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
-                    EdenPair<Boolean, Map> config = convert(listClass, item.getValue(), impliedKey);
+                    EdenPair<Boolean, Map> config = convert(listClass, item, typeKey);
                     holder.extractOptions(extractor.get(), config.second);
                     list.add(holder);
                 }
@@ -170,15 +169,30 @@ public final class ListOptionExtractor extends OptionExtractor<List> {
         }
         else if(Extractable.class.isAssignableFrom(listClass)) {
             if(field.isAnnotationPresent(ImpliedKey.class) && field.isAnnotationPresent(StringDefault.class)) {
-                String impliedKey = field.getAnnotation(ImpliedKey.class).value();
                 String[] defaultItems = field.getAnnotation(StringDefault.class).value();
 
                 ArrayList list = new ArrayList();
-                for(String defaultItem : defaultItems) {
-                    Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
-                    EdenPair<Boolean, Map> config = convert(listClass, defaultItem, impliedKey);
-                    holder.extractOptions(extractor.get(), config.second);
-                    list.add(holder);
+                final String typeKey;
+                final String valueKey;
+                if(field.isAnnotationPresent(ImpliedKey.class)) {
+                    ImpliedKey impliedKey = field.getAnnotation(ImpliedKey.class);
+                    typeKey = impliedKey.typeKey();
+                    valueKey = impliedKey.valueKey();
+                }
+                else {
+                    typeKey = null;
+                    valueKey = null;
+                }
+
+                EdenPair<Boolean, Iterable> valueAsIterable = iterableConverter.convert(field.getType(), defaultItems, typeKey, valueKey);
+
+                if(valueAsIterable.first) {
+                    for(Object item : valueAsIterable.second) {
+                        Extractable holder = (Extractable) extractor.get().getInstanceCreator().getInstance(listClass);
+                        EdenPair<Boolean, Map> config = convert(listClass, item, typeKey);
+                        holder.extractOptions(extractor.get(), config.second);
+                        list.add(holder);
+                    }
                 }
 
                 return list;

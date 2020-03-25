@@ -83,14 +83,9 @@ public class ExtractableOptionExtractorTest extends BaseExtractorTest {
         }
     }
 
-    public static class TestArrayClass {
-        @Option
-        public TestExtractableClass[] testValues;
-    }
-
     public static class TestListClass {
         @Option
-        @ImpliedKey("innerStringValue")
+        @ImpliedKey(typeKey = "innerStringValue")
         @StringDefault({"one", "two"})
         public List<TestExtractableClass> testValues;
     }
