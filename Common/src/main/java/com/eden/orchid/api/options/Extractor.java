@@ -1,6 +1,6 @@
 package com.eden.orchid.api.options;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
 import com.eden.common.util.EdenPair;
 import com.eden.common.util.EdenUtils;
 import com.eden.orchid.api.options.annotations.AllOptions;
@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static clog.dsl.UtilsKt.format;
 
 public class Extractor {
 
@@ -78,8 +80,9 @@ public class Extractor {
                 validator.validate(optionsHolder);
             }
             catch (Exception e) {
-                Clog.e("{} did not pass validation", optionsHolder, e);
-                throw new IllegalStateException(Clog.format("{} did not pass validation", optionsHolder, e));
+                Clog.e("{} did not pass validation", optionsHolder);
+                Clog.e(e);
+                throw new IllegalStateException(format(Clog.INSTANCE, "{} did not pass validation", optionsHolder));
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.eden.orchid.api.options.extractors;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
 import com.eden.orchid.api.converters.ExtractableConverter;
 import com.eden.orchid.api.options.Extractable;
 import com.eden.orchid.api.options.OptionExtractor;

@@ -1,6 +1,6 @@
 package com.eden.orchid.api.cli;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
 import com.eden.common.util.EdenUtils;
 
 import java.util.ArrayList;
@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static clog.dsl.UtilsKt.format;
 
 public final class FlagsParser {
 
@@ -255,7 +257,7 @@ public final class FlagsParser {
                 key = validAliases.get(key);
             }
             else {
-                throw new IllegalArgumentException(Clog.format("Unrecognized flag: -{}", key));
+                throw new IllegalArgumentException(format(Clog.INSTANCE, "Unrecognized flag: -{}", key));
             }
         }
 

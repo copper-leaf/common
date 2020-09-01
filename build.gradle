@@ -7,6 +7,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+        maven { url 'https://dl.bintray.com/copper-leaf/oss' }
         maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
     }

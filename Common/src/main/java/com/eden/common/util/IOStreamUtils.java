@@ -1,6 +1,6 @@
 package com.eden.common.util;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.charset.Charset;
+
+import static clog.dsl.ConfigurationKt.tag;
 
 public class IOStreamUtils {
 
@@ -49,10 +51,10 @@ public class IOStreamUtils {
         @Override
         protected void onReadLine(String line) {
             if (tag != null) {
-                Clog.tag(tag).log(line);
+                tag(Clog.INSTANCE, tag).log(line);
             }
             else {
-                Clog.noTag().log(line);
+                tag(Clog.INSTANCE, "").log(line);
             }
         }
     }

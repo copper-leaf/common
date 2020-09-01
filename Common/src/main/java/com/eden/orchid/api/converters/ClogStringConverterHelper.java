@@ -1,6 +1,8 @@
 package com.eden.orchid.api.converters;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
+
+import static clog.dsl.UtilsKt.format;
 
 public class ClogStringConverterHelper implements StringConverterHelper {
 
@@ -10,7 +12,7 @@ public class ClogStringConverterHelper implements StringConverterHelper {
     }
 
     public String convert(String input) {
-        return Clog.format(input);
+        return format(Clog.INSTANCE, input);
     }
 
 }

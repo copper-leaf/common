@@ -1,6 +1,6 @@
 package com.eden.orchid.api.options;
 
-import com.caseyjbrooks.clog.Clog;
+import clog.Clog;
 import com.eden.orchid.api.converters.ClogStringConverterHelper;
 import com.eden.orchid.api.converters.StringConverter;
 import com.eden.orchid.api.converters.StringConverterHelper;
@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static clog.dsl.ConfigurationKt.setMinPriority;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
 
@@ -80,7 +81,7 @@ public class FromExtractorTest {
     @ParameterizedTest
     @MethodSource("getOptionsArgumentsForAllOptionsTest")
     void testExtractStringOptionForAllOptions(final String inputJson, String expectedStringOption1, String expectedStringOption2) throws Throwable {
-        Clog.getInstance().setMinPriority(Clog.Priority.VERBOSE);
+        setMinPriority(Clog.INSTANCE, Clog.Priority.VERBOSE);
         TestOptionsClass testOptionsClass = new TestOptionsClass();
 
         extractor.extractOptions(testOptionsClass, new JSONObject(inputJson).toMap());
