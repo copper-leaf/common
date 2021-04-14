@@ -1,0 +1,119 @@
+{
+  "ownKey": "wiki",
+  "childrenPages": {"wiki": {
+    "ownKey": "wiki",
+    "childrenPages": {
+      "options": {
+        "ownKey": "options",
+        "childrenPages": {
+          "extractors": {
+            "ownKey": "extractors",
+            "ownPages": [{
+              "reference": {
+                "path": "wiki/options",
+                "baseUrl": "https://copper-leaf.github.io/common",
+                "fileName": "extractors",
+                "extension": "html",
+                "usePrettyUrl": true,
+                "link": "https://copper-leaf.github.io/common/wiki/options/extractors"
+              },
+              "previous": {
+                "path": "wiki/options",
+                "baseUrl": "https://copper-leaf.github.io/common",
+                "fileName": "converters",
+                "extension": "html",
+                "usePrettyUrl": true,
+                "link": "https://copper-leaf.github.io/common/wiki/options/converters"
+              },
+              "description": "",
+              "title": "Option Extractors",
+              "content": ""
+            }]
+          },
+          "converters": {
+            "ownKey": "converters",
+            "ownPages": [{
+              "reference": {
+                "path": "wiki/options",
+                "baseUrl": "https://copper-leaf.github.io/common",
+                "fileName": "converters",
+                "extension": "html",
+                "usePrettyUrl": true,
+                "link": "https://copper-leaf.github.io/common/wiki/options/converters"
+              },
+              "next": {
+                "path": "wiki/options",
+                "baseUrl": "https://copper-leaf.github.io/common",
+                "fileName": "extractors",
+                "extension": "html",
+                "usePrettyUrl": true,
+                "link": "https://copper-leaf.github.io/common/wiki/options/extractors"
+              },
+              "description": "",
+              "title": "Type Converters",
+              "content": ""
+            }]
+          }
+        },
+        "ownPages": [{
+          "reference": {
+            "path": "wiki",
+            "baseUrl": "https://copper-leaf.github.io/common",
+            "fileName": "options",
+            "extension": "html",
+            "usePrettyUrl": true,
+            "link": "https://copper-leaf.github.io/common/wiki/options"
+          },
+          "description": "",
+          "title": "Options",
+          "content": "<html>\n <head><\/head>\n <body>\n  <ul> \n   <li><a href=\"https://copper-leaf.github.io/common/wiki/options/converters\">Type Converters<\/a><\/li> \n   <li><a href=\"https://copper-leaf.github.io/common/wiki/options/extractors\">Option Extractors<\/a><\/li> \n  <\/ul> \n <\/body>\n<\/html>\n"
+        }]
+      },
+      "json": {
+        "ownKey": "json",
+        "childrenPages": {"overview": {
+          "ownKey": "overview",
+          "ownPages": [{
+            "reference": {
+              "path": "wiki/json",
+              "baseUrl": "https://copper-leaf.github.io/common",
+              "fileName": "overview",
+              "extension": "html",
+              "usePrettyUrl": true,
+              "link": "https://copper-leaf.github.io/common/wiki/json/overview"
+            },
+            "description": "",
+            "title": "Overview",
+            "content": ""
+          }]
+        }},
+        "ownPages": [{
+          "reference": {
+            "path": "wiki",
+            "baseUrl": "https://copper-leaf.github.io/common",
+            "fileName": "json",
+            "extension": "html",
+            "usePrettyUrl": true,
+            "link": "https://copper-leaf.github.io/common/wiki/json"
+          },
+          "description": "",
+          "title": "Json",
+          "content": "<html>\n <head><\/head>\n <body>\n  <ul> \n   <li><a href=\"https://copper-leaf.github.io/common/wiki/json/overview\">Overview<\/a><\/li> \n  <\/ul> \n <\/body>\n<\/html>\n"
+        }]
+      }
+    },
+    "ownPages": [{
+      "reference": {
+        "path": "",
+        "baseUrl": "https://copper-leaf.github.io/common",
+        "fileName": "wiki",
+        "extension": "html",
+        "usePrettyUrl": true,
+        "link": "https://copper-leaf.github.io/common/wiki"
+      },
+      "description": "",
+      "title": "Wiki",
+      "content": ""
+    }]
+  }}
+}
