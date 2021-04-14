@@ -1,8 +1,10 @@
 
 site:
+  theme: BsDoc
+  baseUrl: 'https://copper-leaf.github.io/common'
   about:
     siteName: Eden Commons
-    siteDescription: A collection of utility classes and tools used throughout other Eden repositories.
+    siteDescription: A collection of utility classes and tools used throughout other Orchid and Copper Leaf repositories
 
 theme:
   social:
@@ -48,11 +50,18 @@ javadoc:
   sourceDirs:
     - '../../../../Common/src/main/java'
 
+changelog:
+  adapter:
+    type: "file"
+    baseDir: "./../../../../"
+
 services:
   publications:
     stages:
-      - type: githubPages
-        repo: 'JavaEden/Common'
-        username: 'cjbrooks12'
       - type: githubReleases
-        repo: 'JavaEden/Common'
+        repo: 'copper-leaf/common'
+        username: 'cjbrooks12'
+        commitish: 'master'
+      - type: githubPages
+        repo: 'copper-leaf/common'
+        username: 'cjbrooks12'

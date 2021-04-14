@@ -1,42 +1,42 @@
 plugins {
-    id("com.eden.orchidPlugin") version "0.19.0"
+    id("com.eden.orchidPlugin") version "0.21.1"
+    `copper-leaf-base`
+    `copper-leaf-version`
+    `copper-leaf-lint`
 }
-
-group = rootProject.group
-version = rootProject.version
 
 repositories {
     jcenter()
-    maven(url="https://kotlin.bintray.com/kotlinx")
-    maven(url="https://dl.bintray.com/javaeden/Orchid/")
-    maven(url="https://dl.bintray.com/javaeden/Eden/")
-    maven(url="https://jitpack.io")
 }
 
 dependencies {
-    val orchidVersion = "0.19.0"
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidCore:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidBsDoc:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidJavadoc:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidSearch:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidWiki:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidChangelog:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidSyntaxHighlighter:$orchidVersion")
-    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGithub:$orchidVersion")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidBsDoc:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGithub:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:0.21.1")
 }
 
-// Javadoc and Orchid
-//----------------------------------------------------------------------------------------------------------------------
+// Orchid setup
+// ---------------------------------------------------------------------------------------------------------------------
+
+val ghUser: String by extra
+val ghToken: String by extra
+val releaseVersion: String by extra
 
 orchid {
-    version = "${project.version}"
-    theme = "BsDoc"
-    baseUrl = "https://javaeden.github.io/Common"
-    githubToken = project.properties["githubToken"]?.toString()
+    githubToken = ghToken
+    version = releaseVersion
+}
 
-    if(project.hasProperty("env") && project.property("env") == "prod") {
-        environment = "prod"
-    }
-    args = listOf("--experimentalSourceDoc")
+val build by tasks
+val check by tasks
+val orchidBuild by tasks
+val orchidDeploy by tasks
+
+orchidBuild.mustRunAfter(check)
+build.dependsOn(orchidBuild)
+
+val publish by tasks.registering {
+    dependsOn(orchidDeploy)
 }

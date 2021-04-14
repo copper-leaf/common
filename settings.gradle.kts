@@ -1,14 +1,21 @@
-buildscript {
-    repositories {
-        maven(url = "https://plugins.gradle.org/m2/")
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            when (requested.id.id) {
+                "binary-compatibility-validator" -> useModule("org.jetbrains.kotlinx:binary-compatibility-validator:${requested.version}")
+            }
+        }
     }
-    dependencies {
-        classpath("gradle.plugin.net.vivin:gradle-semantic-build-versioning:4.0.0")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven(url = "https://kotlin.bintray.com/kotlinx")
     }
 }
-apply(plugin = "net.vivin.gradle-semantic-build-versioning")
 
-rootProject.name = "Common"
+rootProject.name = "common"
 
+include(":common-core")
 include(":docs")
-include(":Common")
